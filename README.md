@@ -1,6 +1,6 @@
 # ck - Semantic Code Search
 
-[![CI](https://github.com/BeaconBay/ck/actions/workflows/ci.yaml/badge.svg)](https://github.com/BeaconBay/ck/actions)
+[![CI](https://github.com/BeaconBay/ck/actions/workflows/ci.yaml/badge.svg)](https://github.com/BeaconBay/ck/actions/workflows/ci.yaml)
 [![Crates.io](https://img.shields.io/crates/v/ck-search.svg)](https://crates.io/crates/ck-search)
 [![Downloads](https://img.shields.io/crates/d/ck-search.svg)](https://crates.io/crates/ck-search)
 [![License](https://img.shields.io/badge/license-MIT%2FApache--2.0-blue.svg)](LICENSE-MIT)
