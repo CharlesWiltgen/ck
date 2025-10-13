@@ -599,6 +599,36 @@ pub fn compute_file_hash(path: &Path) -> Result<String> {
     Ok(hash.to_hex().to_string())
 }
 
+/// Compute blake3 hash of chunk content for incremental indexing
+/// This enables us to detect which chunks have changed and only re-embed those
+///
+/// Hashes all fields that affect the chunk's display and meaning:
+/// - text: the main chunk content
+/// - leading_trivia: doc comments and comments before the chunk
+/// - trailing_trivia: comments after the chunk
+pub fn compute_chunk_hash(
+    text: &str,
+    leading_trivia: &[String],
+    trailing_trivia: &[String],
+) -> String {
+    let mut hasher = blake3::Hasher::new();
+
+    // Hash the main text
+    hasher.update(text.as_bytes());
+
+    // Hash leading trivia (doc comments, preceding comments)
+    for trivia in leading_trivia {
+        hasher.update(trivia.as_bytes());
+    }
+
+    // Hash trailing trivia (following comments)
+    for trivia in trailing_trivia {
+        hasher.update(trivia.as_bytes());
+    }
+
+    hasher.finalize().to_hex().to_string()
+}
+
 /// PDF-specific utilities
 pub mod pdf {
     use std::path::{Path, PathBuf};
