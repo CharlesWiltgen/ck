@@ -264,23 +264,24 @@ jobs:
           verify_crate() {
             local package=$1
             local version=$2
-            local max_attempts=10
+            local max_attempts=20
+            local wait_time=30
+            local url="https://crates.io/api/v1/crates/${package}/${version}"
 
             echo "Verifying $package v$version is available on crates.io..."
 
             for attempt in $(seq 1 $max_attempts); do
-              # Update the index and check if package is available
-              cargo search "$package" --limit 1 | grep -q "^$package = \"$version\""
-              if [ $? -eq 0 ]; then
+              if curl --silent --show-error --fail "$url" >/dev/null; then
                 echo "$package v$version verified on crates.io"
                 return 0
               fi
 
               echo "Waiting for $package v$version to be available (attempt $attempt/$max_attempts)..."
-              sleep 30
+              sleep $wait_time
             done
 
             echo "Failed to verify $package v$version on crates.io"
+            curl --silent --show-error "$url" || true
             return 1
           }
 
