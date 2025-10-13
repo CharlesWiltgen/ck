@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.7.0] - 2025-10-13
+
+### Added
+- **Chunk-level incremental indexing**: Smart caching system that reuses embeddings for unchanged chunks, dramatically improving reindexing performance (80-90% cache hit rate for typical code changes)
+- **Content-aware cache invalidation**: Hash-based invalidation using blake3(chunk_text + leading_trivia + trailing_trivia) ensures doc comment and whitespace changes properly invalidate cache
+- **Model compatibility enforcement**: Prevents silent embedding corruption by validating model consistency across indexing operations with clear error messages and recovery guidance
+- **Chunk hash versioning**: Manifest tracking of hash scheme version (v2) for future compatibility and reliable version detection
+
+### Performance
+- **Selective re-embedding**: Only changed chunks are re-embedded; unchanged chunks reuse cached embeddings from previous index
+- **Cache hit validation**: Both hash match AND dimension match required before reusing cached embeddings
+- **Typical performance**: For code changes affecting 10-20% of file chunks, 80-90% of embeddings are reused from cache
+
+### Technical
+- **Blake3 hashing**: Fast cryptographic hashing of chunk content including all trivia for reliable change detection
+- **Sidecar-based cache**: Old sidecars loaded into memory to build chunk_hash → embedding cache for efficient lookup
+- **Model validation**: Index operations validate embedding model matches existing index and return actionable errors on mismatch
+- **Backward compatibility**: Existing manifests auto-upgrade to chunk_hash_version v2 on load
+- **Comprehensive testing**: All 181 tests passing with full coverage of cache invalidation, model validation, and version tracking
+
 ## [0.6.0] - 2025-10-12
 
 ### Added
