@@ -15,9 +15,9 @@ Yes, completely offline. The embedding model runs locally with no network calls.
 ### Is it fast enough for large codebases?
 
 Yes. Performance benchmarks:
-- **Indexing**: ~1M LOC in under 2 minutes
-- **Search**: Sub-500ms queries on typical codebases
-- **Delta updates**: Only changed files are re-indexed
+- **Indexing** – ~1M LOC in under 2 minutes
+- **Search** – Sub-500ms queries on typical codebases
+- **Delta updates** – Only changed files are re-indexed
 
 The first semantic search builds the index automatically; after that only changed files are reprocessed, keeping searches sub-second even on large projects.
 

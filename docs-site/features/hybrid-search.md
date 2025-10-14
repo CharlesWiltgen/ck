@@ -5,9 +5,9 @@ Combine semantic understanding with keyword precision using Reciprocal Rank Fusi
 ## What is Hybrid Search?
 
 Hybrid search merges semantic and keyword search results to give you the best of both worlds:
-- **Semantic**: Finds conceptually related code
-- **Keyword**: Ensures query terms are present
-- **Fusion**: Ranks results by combined relevance
+- **Semantic** – Finds conceptually related code
+- **Keyword** – Ensures query terms are present
+- **Fusion** – Ranks results by combined relevance
 
 ## Basic Usage
 

@@ -186,9 +186,9 @@ ck --index --model jina-code .
 
 Models are downloaded once and cached:
 
-- **Linux/macOS**: `~/.cache/ck/models/`
-- **Windows**: `%LOCALAPPDATA%\ck\cache\models\`
-- **Fallback**: `.ck_models/models/` in current directory
+- **Linux/macOS** – `~/.cache/ck/models/`
+- **Windows** – `%LOCALAPPDATA%\ck\cache\models\`
+- **Fallback** – `.ck_models/models/` in current directory
 
 ```bash
 # Check cache
@@ -249,9 +249,9 @@ ck --inspect --model nomic-v1.5 src/large_file.py
 
 ### Consider Trade-offs
 
-- **Fast iteration**: Use `bge-small`
-- **Best quality**: Use `jina-code`
-- **Balanced**: Use `nomic-v1.5`
+- **Fast iteration** – Use `bge-small`
+- **Best quality** – Use `jina-code`
+- **Balanced** – Use `nomic-v1.5`
 
 ## Troubleshooting
 

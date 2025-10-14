@@ -224,9 +224,9 @@ ck --sem --threshold 0.6 "database connection" src/
 
 Semantic search works with all supported languages:
 
-- **Strong support**: Python, JavaScript/TypeScript, Rust, Go, Ruby, C#, Haskell, Zig
-- **Text formats**: Markdown, config files, documentation
-- **Binary detection**: Automatically skips non-text files
+- **Strong support** – Python, JavaScript/TypeScript, Rust, Go, Ruby, C#, Haskell, Zig
+- **Text formats** – Markdown, config files, documentation
+- **Binary detection** – Automatically skips non-text files
 
 Each language uses tree-sitter for intelligent chunking at function/class boundaries.
 
@@ -246,15 +246,15 @@ ck --sem "another pattern" src/
 
 ### Search Speed
 
-- **Typical query**: <500ms
-- **Large codebases**: <1s
-- **Factors**: Result count, threshold, top-k limit
+- **Typical query** – <500ms
+- **Large codebases** – <1s
+- **Factors** – Result count, threshold, top-k limit
 
 ### Index Size
 
-- **Typical**: 1-3x source code size
+- **Typical** – 1-3x source code size
 - **Location**: `.ck/` directory (safe to delete)
-- **Compression**: Efficient binary format
+- **Compression** – Efficient binary format
 
 ## Best Practices
 

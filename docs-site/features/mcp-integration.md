@@ -400,10 +400,10 @@ results = await semantic_search(query, snippet_length=100)
 
 ## Security Considerations
 
-- **Local execution**: All code analysis happens locally
-- **No network calls**: No data sent to external services
-- **File access**: MCP server has same permissions as user
-- **Sandboxing**: Consider running in containerized environment
+- **Local execution** – All code analysis happens locally
+- **No network calls** – No data sent to external services
+- **File access** – MCP server has same permissions as user
+- **Sandboxing** – Consider running in containerized environment
 
 ## Next Steps
 

@@ -4,7 +4,7 @@ layout: home
 hero:
   name: ck
   text: Semantic Code Search
-  tagline: Supercharges your coding LLM with grep-compatible, semantic search that understands what you're looking for, instead of just string patterns
+  tagline: Supercharge your coding LLM with grep-compatible, semantic search that understands what you’re looking for, instead of just string patterns
   image:
     src: /logo.png
     alt: ck logo
@@ -71,12 +71,12 @@ ck --hybrid "connection timeout" src/
 
 **ck (seek)** finds code by meaning, not just keywords. It’s the grep you wish you had:
 
-- 🎯 **Understand intent**: Search for “error handling” and find try/catch blocks, error returns, and exception handling even when those exact words aren’t present
-- 🤖 **AI-first**: Built-in MCP server for direct integration with AI coding assistants
-- ⚡ **Fast & efficient**: Automatic incremental indexing, sub-second queries
-- 🔧 **Drop-in replacement**: Works exactly like grep/ripgrep with all the flags you know
-- 🌐 **Multi-language**: Python, JavaScript/TypeScript, Rust, Go, Ruby, Haskell, C#, and more
-- 🔒 **Privacy-first**: 100% offline, no telemetry, no external API calls
+- 🎯 **Understand intent** – Search for "error handling" and find try/catch blocks, error returns, and exception handling even when those exact words aren't present
+- 🤖 **AI-first** – Built-in MCP server for direct integration with AI coding assistants
+- ⚡ **Fast & efficient** – Automatic incremental indexing, sub-second queries
+- 🔧 **Drop-in replacement** – Works exactly like grep/ripgrep with all the flags you know
+- 🌐 **Multi-language** – Python, JavaScript/TypeScript, Rust, Go, Ruby, Haskell, C#, and more
+- 🔒 **Privacy-first** – 100% offline, no telemetry, no external API calls
 
 ## Installation
 

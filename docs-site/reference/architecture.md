@@ -256,24 +256,24 @@ Sidecar contains:
 
 ### Indexing Performance
 
-- **Parallel file processing**: Rayon thread pool
-- **Incremental updates**: Hash-based change detection
-- **Efficient I/O**: Memory-mapped files
-- **Smart exclusions**: Early filtering of non-code files
+- **Parallel file processing** – Rayon thread pool
+- **Incremental updates** – Hash-based change detection
+- **Efficient I/O** – Memory-mapped files
+- **Smart exclusions** – Early filtering of non-code files
 
 ### Search Performance
 
-- **Vector search**: O(log n) with ANN index
-- **Keyword search**: Tantivy inverted index
-- **Caching**: Embedding cache, model cache
-- **Streaming results**: Generator patterns for large result sets
+- **Vector search** – O(log n) with ANN index
+- **Keyword search** – Tantivy inverted index
+- **Caching** – Embedding cache, model cache
+- **Streaming results** – Generator patterns for large result sets
 
 ### Memory Management
 
-- **Lazy loading**: Files loaded only when needed
-- **Streaming processing**: Process files one at a time
-- **Index compression**: Binary format for vectors
-- **Model caching**: Reuse loaded models
+- **Lazy loading** – Files loaded only when needed
+- **Streaming processing** – Process files one at a time
+- **Index compression** – Binary format for vectors
+- **Model caching** – Reuse loaded models
 
 ## Testing Strategy
 

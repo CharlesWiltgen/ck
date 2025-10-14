@@ -70,11 +70,11 @@ ck --serve
 
 ## Design Philosophy
 
-- **Drop-in compatibility**: Works like grep, enhances where needed
-- **Automatic everything**: Index management, updates, model downloads
-- **Privacy-first**: Everything runs locally, no telemetry
-- **Performance matters**: Fast indexing, sub-second queries
-- **AI-native**: Built for both humans and AI agents
+- **Drop-in compatibility** – Works like grep, enhances where needed
+- **Automatic everything** – Index management, updates, model downloads
+- **Privacy-first** – Everything runs locally, no telemetry
+- **Performance matters** – Fast indexing, sub-second queries
+- **AI-native** – Built for both humans and AI agents
 
 ## Next Steps
 

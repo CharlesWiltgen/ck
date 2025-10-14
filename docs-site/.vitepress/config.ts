@@ -7,7 +7,7 @@ export default defineConfig({
   base: '/ck/',
 
   head: [
-    ['link', { rel: 'icon', href: '/ck/favicon.ico' }]
+    ['link', { rel: 'icon', type: 'image/png', href: '/ck/favicon.png' }]
   ],
 
   themeConfig: {
