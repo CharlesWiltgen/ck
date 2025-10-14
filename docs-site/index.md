@@ -4,9 +4,9 @@ layout: home
 hero:
   name: ck
   text: Semantic Code Search
-  tagline: Supercharge your coding LLM to grep-compatible, semantic search that understands what you're looking for, instead of just string patterns
+  tagline: Supercharges your coding LLM with grep-compatible, semantic search that understands what you're looking for, instead of just string patterns
   image:
-    src: /logo.svg
+    src: /logo.png
     alt: ck logo
   actions:
     - theme: brand
