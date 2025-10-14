@@ -1,0 +1,1 @@
+import{_ as i,c as a,o as e,ag as n}from"./chunks/framework.BmMagzGG.js";const k=JSON.parse('{"title":"FAQ","description":"","frontmatter":{},"headers":[],"relativePath":"guide/faq.md","filePath":"guide/faq.md"}'),t={name:"guide/faq.md"};function l(h,s,r,o,p,d){return e(),a("div",null,[...s[0]||(s[0]=[n("",132)])])}const g=i(t,[["render",l]]);export{k as __pageData,g as default};
