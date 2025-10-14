@@ -4,7 +4,7 @@ layout: home
 hero:
   name: ck
   text: Semantic Code Search
-  tagline: grep that understands what you’re looking for — search for “error handling” and find try/catch blocks, error returns, and exception handling code
+  tagline: Supercharge your coding LLM to grep-compatible, semantic search that understands what you're looking for, instead of just string patterns
   image:
     src: /logo.svg
     alt: ck logo
