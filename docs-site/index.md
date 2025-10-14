@@ -2,7 +2,7 @@
 layout: home
 
 hero:
-  name: ck
+  name: ck <span style="font-weight:300;">(“seek”)</span>
   text: Semantic Code Search
   tagline: Supercharge your coding LLM with grep-compatible, semantic search that understands what you’re looking for, instead of just string patterns
   image:

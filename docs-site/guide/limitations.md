@@ -1,6 +1,6 @@
 # Known Limitations
 
-Current limitations and constraints of ck. These are areas where ck has known constraints or where requested features haven’t been implemented yet.
+Current limitations and constraints of `ck`. These are areas where `ck` has known constraints or where requested features haven't been implemented yet.
 
 ## Indexing Limitations
 
@@ -33,7 +33,7 @@ Use `.ckignore` to exclude everything except your target directory:
 **Issue**: Large files (26K+ LOC) are fully re-indexed on any change.
 
 **Details**:
-When a file changes, ck re-indexes the entire file rather than using git diff to index only changed sections. This is particularly noticeable with large files like database schema dumps.
+When a file changes, `ck` re-indexes the entire file rather than using git diff to index only changed sections. This is particularly noticeable with large files like database schema dumps.
 
 **Why this happens**:
 - Semantic chunking boundaries can change non-trivially based on file content
@@ -65,7 +65,7 @@ The `.ck/` index directory is always created at the repository root, and all ind
 
 **Impact**:
 - Cannot have multiple independent indexes in subdirectories
-- Must run ck commands from repository root for semantic search
+- Must run `ck` commands from repository root for semantic search
 
 **Workaround**:
 Use `cd` to navigate to repository root before running semantic searches, or use git to determine root:
@@ -142,7 +142,7 @@ Rebuilding takes time but is necessary when changing models.
 - External API-based models (OpenAI, Anthropic, HuggingFace Inference API)
 - Proprietary embedding services
 
-**Why**: ck uses fastembed-rs for fast local inference, which limits options to its supported models.
+**Why**: `ck` uses fastembed-rs for fast local inference, which limits options to its supported models.
 
 **Future consideration**: External embedding API support is being considered for users who want to use specific models.
 
@@ -170,7 +170,7 @@ Models are pre-trained and used as-is. Domain-specific fine-tuning is not suppor
 **Issue**: Model cache location is determined by fastembed/hf-hub defaults.
 
 **Details**:
-While environment variables like `$HF_HOME` work, there’s no ck-specific configuration for cache location.
+While environment variables like `$HF_HOME` work, there's no `ck`-specific configuration for cache location.
 
 **Workaround**:
 Use HuggingFace environment variables:

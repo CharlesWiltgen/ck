@@ -43,10 +43,10 @@ ck --serve
 
 ## How It Works
 
-1. **Indexing**: ck automatically creates and maintains semantic indexes of your code
-2. **Embedding**: Uses local AI models (BGE, Nomic, Jina) to understand code semantics
-3. **Search**: Finds semantically similar code chunks using vector similarity
-4. **Results**: Returns familiar grep-style output with optional relevance scores
+1. **Indexing** – ck automatically creates and maintains semantic indexes of your code
+2. **Embedding** – Uses local AI models (BGE, Nomic, Jina) to understand code semantics
+3. **Search** – Finds semantically similar code chunks using vector similarity
+4. **Results** – Returns familiar grep-style output with optional relevance scores
 
 ## Why ck?
 
