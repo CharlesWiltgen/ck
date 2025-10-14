@@ -4,9 +4,10 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   title: "ck",
   description: "Semantic Code Search - grep that understands what you're looking for",
+  base: '/ck/',
 
   head: [
-    ['link', { rel: 'icon', href: '/favicon.ico' }]
+    ['link', { rel: 'icon', href: '/ck/favicon.ico' }]
   ],
 
   themeConfig: {

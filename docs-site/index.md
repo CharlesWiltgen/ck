@@ -2,8 +2,8 @@
 layout: home
 
 hero:
-  name: “ck”
-  text: “Semantic Code Search”
+  name: ck
+  text: Semantic Code Search
   tagline: grep that understands what you’re looking for — search for “error handling” and find try/catch blocks, error returns, and exception handling code
   image:
     src: /logo.svg
