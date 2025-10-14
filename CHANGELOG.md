@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Added
+- **VitePress documentation site**: Comprehensive documentation with improved navigation, search, and structure in `docs-site/` directory
+- **Documentation features**: Guide pages, feature documentation, CLI reference, embedding model guide, architecture docs, and contributing guides
+- **Local search**: Built-in search functionality in documentation site
+
+### Technical
+- **Self-contained docs**: All documentation tooling isolated in docs-site/ with independent build process using pnpm and VitePress
+- **Node.js integration**: Documentation site uses Node.js 18+, pnpm 10+, and VitePress 1.6+ for modern documentation experience
+- **GitHub integration**: Edit links and social links configured for easy contribution
+
 ## [0.5.3] - 2025-09-29
 
 ### Added

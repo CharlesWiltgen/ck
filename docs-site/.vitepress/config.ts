@@ -1,0 +1,96 @@
+import { defineConfig } from 'vitepress'
+
+// https://vitepress.dev/reference/site-config
+export default defineConfig({
+  title: "ck",
+  description: "Semantic Code Search - grep that understands what you're looking for",
+
+  head: [
+    ['link', { rel: 'icon', href: '/favicon.ico' }]
+  ],
+
+  themeConfig: {
+    // https://vitepress.dev/reference/default-theme-config
+    logo: '/logo.svg',
+
+    nav: [
+      { text: 'Guide', link: '/guide/introduction' },
+      { text: 'Features', link: '/features/semantic-search' },
+      { text: 'Reference', link: '/reference/cli' },
+      { text: 'GitHub', link: 'https://github.com/BeaconBay/ck' }
+    ],
+
+    sidebar: {
+      '/guide/': [
+        {
+          text: 'Getting Started',
+          items: [
+            { text: 'Introduction', link: '/guide/introduction' },
+            { text: 'Installation', link: '/guide/getting-started' },
+            { text: 'Basic Usage', link: '/guide/basic-usage' },
+            { text: 'Advanced Usage', link: '/guide/advanced-usage' }
+          ]
+        },
+        {
+          text: 'Resources',
+          items: [
+            { text: 'FAQ', link: '/guide/faq' },
+            { text: 'Known Limitations', link: '/guide/limitations' },
+            { text: 'Roadmap', link: '/guide/roadmap' }
+          ]
+        }
+      ],
+      '/features/': [
+        {
+          text: 'Features',
+          items: [
+            { text: 'Semantic Search', link: '/features/semantic-search' },
+            { text: 'MCP Integration', link: '/features/mcp-integration' },
+            { text: 'Hybrid Search', link: '/features/hybrid-search' },
+            { text: 'grep Compatibility', link: '/features/grep-compatibility' }
+          ]
+        }
+      ],
+      '/reference/': [
+        {
+          text: 'Reference',
+          items: [
+            { text: 'CLI Reference', link: '/reference/cli' },
+            { text: 'Embedding Models', link: '/reference/models' },
+            { text: 'Configuration', link: '/reference/configuration' },
+            { text: 'Advanced Configuration', link: '/reference/advanced' },
+            { text: 'Architecture', link: '/reference/architecture' }
+          ]
+        }
+      ],
+      '/contributing/': [
+        {
+          text: 'Contributing',
+          items: [
+            { text: 'Development Guide', link: '/contributing/development' },
+            { text: 'Release Process', link: '/contributing/release-process' },
+            { text: 'Testing', link: '/contributing/testing' }
+          ]
+        }
+      ]
+    },
+
+    socialLinks: [
+      { icon: 'github', link: 'https://github.com/BeaconBay/ck' }
+    ],
+
+    footer: {
+      message: 'Released under the MIT or Apache-2.0 License.',
+      copyright: 'Copyright © 2025 BeaconBay'
+    },
+
+    search: {
+      provider: 'local'
+    },
+
+    editLink: {
+      pattern: 'https://github.com/BeaconBay/ck/edit/main/docs-site/:path',
+      text: 'Edit this page on GitHub'
+    }
+  }
+})
