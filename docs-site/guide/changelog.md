@@ -52,7 +52,7 @@ All notable changes to ck are documented here following [Semantic Versioning](ht
 ### Technical
 - **Atomic file operations**: Uses `tempfile::NamedTempFile` for cross-platform atomic writes with proper sync guarantees
 - **Model registry integration**: Centralized model management with alias support and dimension tracking
-- **Enhanced error messages**: User-friendly error messages with exact commands to resolve issues (e.g., "run `ck --clean .` then rebuild")
+- **Enhanced error messages**: User-friendly error messages with exact commands to resolve issues (e.g., "run `ck --clean .` then rebuild”)
 - **Legacy code cleanup**: Removed 338 lines of unused ANN semantic search implementation
 - **Interrupt handling**: Proper Ctrl+C handling during indexing with graceful cleanup
 
@@ -139,7 +139,7 @@ All notable changes to ck are documented here following [Semantic Versioning](ht
 ::: tip Why JSONL for AI Agents?
 - **Streaming friendly**: Process results as they arrive, no waiting for complete response
 - **Memory efficient**: Parse one result at a time, not entire array into memory
-- **Error resilient**: Malformed lines don't break entire response
+- **Error resilient**: Malformed lines don’t break entire response
 - **Standard format**: Used by OpenAI, Anthropic, and modern ML pipelines
 :::
 
@@ -172,7 +172,7 @@ All notable changes to ck are documented here following [Semantic Versioning](ht
 - **Broader text file support**: Now automatically indexes log files (`.log`), config files (`.env`, `.conf`), and any other text format regardless of extension
 - **Improved accuracy**: Files without extensions containing text content are now correctly detected and indexed
 - **Binary file exclusion**: Files containing NUL bytes (executables, images, etc.) are correctly identified as binary and excluded from indexing
-- **Performance**: Fast detection using only the first 8KB of file content, similar to ripgrep's approach
+- **Performance**: Fast detection using only the first 8KB of file content, similar to ripgrep’s approach
 
 ### Technical
 - **Content-based detection**: `is_text_file()` function now reads file content instead of checking against a hardcoded extension allowlist
@@ -183,11 +183,11 @@ All notable changes to ck are documented here following [Semantic Versioning](ht
 ### Fixed
 - **Exclude patterns functionality**: Fixed critical bug where `--exclude` patterns were completely ignored during indexing operations
 - **Directory exclusion**: `--exclude "node_modules"` and similar patterns now work correctly to exclude directories and files
-- **Pattern matching**: Added support for gitignore-style glob patterns using ripgrep's `OverrideBuilder` for consistent, performant exclusion
+- **Pattern matching**: Added support for gitignore-style glob patterns using ripgrep’s `OverrideBuilder` for consistent, performant exclusion
 - **Multiple exclusions**: Fixed support for multiple `--exclude` flags (e.g., `--exclude "node_modules" --exclude "*.log"`)
 
 ### Technical
-- **ripgrep alignment**: Leveraged the `ignore` crate's `OverrideBuilder` for exclude pattern matching, aligning with ripgrep's proven approach
+- **ripgrep alignment**: Leveraged the `ignore` crate’s `OverrideBuilder` for exclude pattern matching, aligning with ripgrep’s proven approach
 - **Streaming integration**: Exclude patterns now work correctly with the new streaming indexing architecture
 - **API consistency**: Updated all indexing functions (`index_directory`, `smart_update_index`, etc.) to support exclude patterns
 

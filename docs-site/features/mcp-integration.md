@@ -159,7 +159,7 @@ None
 - String containing default `.ckignore` content
 
 **Use case:**
-Useful for editor extensions and tools that need to display or work with ck's default exclusion patterns without parsing the backend code.
+Useful for editor extensions and tools that need to display or work with ck’s default exclusion patterns without parsing the backend code.
 
 **Example:**
 ```python

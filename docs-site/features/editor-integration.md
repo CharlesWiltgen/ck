@@ -1,6 +1,6 @@
 # Editor Integration
 
-Bring ck's semantic code search directly into your code editor with native extensions.
+Bring ck’s semantic code search directly into your code editor with native extensions.
 
 ## Overview
 
@@ -126,7 +126,7 @@ Works like grep with full regular expression support.
 
 ## Commands
 
-Access ck functionality through VS Code's command palette or keyboard shortcuts:
+Access ck functionality through VS Code’s command palette or keyboard shortcuts:
 
 | Command | Shortcut (Windows/Linux) | Shortcut (macOS) | Description |
 |---------|-------------------------|------------------|-------------|
@@ -360,7 +360,7 @@ ck-vscode/
 
 ## Troubleshooting
 
-### Extension Doesn't Activate
+### Extension Doesn’t Activate
 
 **Symptoms**: Extension icon not visible, commands not available
 
@@ -419,11 +419,11 @@ ck-vscode/
 
 ### Results Seem Outdated
 
-**Symptoms**: New code doesn't appear, deleted code still shows
+**Symptoms**: New code doesn’t appear, deleted code still shows
 
 **Solutions**:
 1. Run `ck: Reindex` command
-2. Check `.ckignore` patterns aren't excluding files
+2. Check `.ckignore` patterns aren’t excluding files
 3. Verify files are committed/staged (respects `.gitignore`)
 
 ### Webview Not Loading

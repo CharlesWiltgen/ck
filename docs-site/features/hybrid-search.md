@@ -246,7 +246,7 @@ ck --sem --scores "pattern" src/
 ck "pattern" src/
 ```
 
-### "My threshold doesn't seem to work"
+### “My threshold doesn’t seem to work”
 
 Remember: hybrid search uses RRF scoring (~0.01-0.05), not semantic scoring (0-1).
 

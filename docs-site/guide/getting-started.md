@@ -224,7 +224,7 @@ ck offers multiple interfaces for different workflows:
 
 ### Command-Line Interface (CLI)
 
-The default mode you've been using — perfect for scripts and pipelines:
+The default mode you’ve been using — perfect for scripts and pipelines:
 
 ```bash
 ck --sem "pattern" src/

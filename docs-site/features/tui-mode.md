@@ -213,8 +213,8 @@ Classic grep-style pattern matching with full regex support. Searches exact text
 - Familiar to grep/ripgrep users
 
 **Limitations:**
-- Doesn't understand code semantics
-- Won't find semantically similar but textually different code
+- Doesn’t understand code semantics
+- Won’t find semantically similar but textually different code
 - Requires knowing exact patterns to search for
 
 **Pattern syntax:**
@@ -286,7 +286,7 @@ The matched code chunk with semantic boundaries, showing complete functions, cla
 - Shows chunk boundaries with tree-sitter precision
 - Displays chunk type (function, class, method, struct, etc.)
 - Shows token count estimates (useful for LLM context)
-- Breadcrumbs for nested code (e.g., "impl MyStruct > fn new")
+- Breadcrumbs for nested code (e.g., “impl MyStruct > fn new”)
 - Syntax highlighting
 - Automatic boundary detection
 
@@ -467,7 +467,7 @@ export TERM=screen-256color  # tmux 256 color support
 
 ### Color Scheme
 
-The TUI adapts to your terminal's color scheme:
+The TUI adapts to your terminal’s color scheme:
 
 **Recommended terminals:**
 - **macOS**: iTerm2, Alacritty, WezTerm, Terminal.app
@@ -570,7 +570,7 @@ export EDITOR=nvim
 ### TUI not launching
 
 **Symptoms:**
-- TUI doesn't appear
+- TUI doesn’t appear
 - Terminal shows garbled output
 - Immediate crash or error
 
@@ -592,7 +592,7 @@ tput colors
 **Common causes:**
 - Very old terminal emulator
 - SSH session without proper TERM forwarding
-- Terminal doesn't support required features
+- Terminal doesn’t support required features
 
 **Workarounds:**
 - Use CLI mode instead: `ck --sem "query" .`

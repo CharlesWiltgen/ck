@@ -16,7 +16,7 @@ AI coding agents benefit significantly from semantic code search capabilities. T
 
 ## Claude Code Integration
 
-Claude Code is Anthropic's official CLI for Claude. Here's how to configure it for optimal ck usage.
+Claude Code is Anthropic’s official CLI for Claude. Here’s how to configure it for optimal ck usage.
 
 ### Tool Permissions
 
@@ -201,7 +201,7 @@ ck --jsonl --snippet-length 150 --sem "pattern" src/
 **Why JSONL for AI agents**:
 - ✅ Stream-friendly: Process results as they arrive
 - ✅ Memory-efficient: Parse one result at a time
-- ✅ Error-resilient: One malformed line doesn't break everything
+- ✅ Error-resilient: One malformed line doesn’t break everything
 - ✅ Standard format: Used by OpenAI, Anthropic, modern ML pipelines
 
 #### JSON
@@ -280,7 +280,7 @@ __snapshots__/
 # *.md
 ```
 
-**Key principle**: Exclude anything that doesn't help the AI understand your codebase's logic and architecture.
+**Key principle**: Exclude anything that doesn’t help the AI understand your codebase’s logic and architecture.
 
 ## Common Workflows
 
@@ -480,7 +480,7 @@ Typical performance for AI agent workflows:
 - Use lexical search for exact identifiers
 - Tune thresholds based on result quality
 
-❌ **Don't**:
+❌ **Don’t**:
 - Re-index unnecessarily (ck handles incremental updates)
 - Use threshold above 0.9 (too restrictive)
 - Use threshold below 0.3 (too noisy)

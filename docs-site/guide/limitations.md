@@ -1,6 +1,6 @@
 # Known Limitations
 
-Current limitations and constraints of `ck`. These are areas where `ck` has known constraints or where requested features haven't been implemented yet.
+Current limitations and constraints of `ck`. These are areas where `ck` has known constraints or where requested features haven’t been implemented yet.
 
 ## Indexing Limitations
 
@@ -170,7 +170,7 @@ Models are pre-trained and used as-is. Domain-specific fine-tuning is not suppor
 **Issue**: Model cache location is determined by fastembed/hf-hub defaults.
 
 **Details**:
-While environment variables like `$HF_HOME` work, there's no `ck`-specific configuration for cache location.
+While environment variables like `$HF_HOME` work, there’s no `ck`-specific configuration for cache location.
 
 **Workaround**:
 Use HuggingFace environment variables:

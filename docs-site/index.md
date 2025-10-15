@@ -86,7 +86,7 @@ ck --serve
 
 **ck (seek)** finds code by meaning, not just keywords. It’s the grep you wish you had:
 
-- 🎯 **Understand intent** – Search for "error handling" and find try/catch blocks, error returns, and exception handling even when those exact words aren't present
+- 🎯 **Understand intent** – Search for “error handling” and find try/catch blocks, error returns, and exception handling even when those exact words aren’t present
 - 🤖 **AI-first** – Built-in MCP server for direct integration with AI coding assistants
 - ⚡ **Fast & efficient** – Automatic incremental indexing, sub-second queries
 - 🔧 **Drop-in replacement** – Works exactly like grep/ripgrep with all the flags you know

@@ -250,7 +250,7 @@ ck --json --sem "pattern" src/
 - Use semantic search for concepts
 - Use lexical search for exact identifiers
 
-❌ **Don't**:
+❌ **Don’t**:
 - Re-index unnecessarily (automatic incremental updates)
 - Use threshold > 0.9 (too restrictive)
 - Use threshold < 0.3 (too noisy)

@@ -244,7 +244,7 @@ See [AI Agent Setup](/guide/ai-agent-setup) for detailed configuration guidance 
 - Need pagination for large results
 
 ❌ **Not ideal when you**:
-- Don't use AI assistants
+- Don’t use AI assistants
 - Prefer direct CLI interaction
 - Want simple grep replacement
 - Need human-facing output
