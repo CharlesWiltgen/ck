@@ -30,7 +30,8 @@ export default defineConfig({
             { text: 'Installation', link: '/guide/getting-started' },
             { text: 'Choosing an Interface', link: '/guide/choosing-interface' },
             { text: 'Basic Usage', link: '/guide/basic-usage' },
-            { text: 'Advanced Usage', link: '/guide/advanced-usage' }
+            { text: 'Advanced Usage', link: '/guide/advanced-usage' },
+            { text: 'AI Agent Setup', link: '/guide/ai-agent-setup' }
           ]
         },
         {

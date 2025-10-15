@@ -233,6 +233,10 @@ if response["pagination"]["next_cursor"]:
 
 ## AI Agent Best Practices
 
+::: tip Configure ck for AI Agents
+For comprehensive guidance on configuring ck for AI coding assistants like Claude Code, see [AI Agent Setup](/guide/ai-agent-setup).
+:::
+
 ### Query Formulation
 
 ```python
@@ -441,6 +445,7 @@ results = await semantic_search(query, snippet_length=100)
 
 ## Next Steps
 
+- Configure [AI agent setup](/guide/ai-agent-setup) for optimal integration
 - Read [semantic search](/features/semantic-search) documentation
 - Learn about [hybrid search](/features/hybrid-search)
 - Explore [embedding models](/reference/models)

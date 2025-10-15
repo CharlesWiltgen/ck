@@ -229,6 +229,10 @@ ck-tui
 
 **Best for**: AI agent integration, Claude Desktop, automation tools
 
+::: tip AI Agent Configuration
+See [AI Agent Setup](/guide/ai-agent-setup) for detailed configuration guidance for Claude Code and other AI coding assistants.
+:::
+
 ### When to Use
 
 ✅ **Perfect when you**:
@@ -388,12 +392,15 @@ ck --sem "pattern" . -l > files.txt
 # Install editor extension
 code --install-extension ck-search
 
+# Configure for AI agents (see AI Agent Setup guide)
 # Enable MCP in Claude Desktop
 # Use AI to explore codebase
 
 # Add CLI for custom scripts
 ck --jsonl --sem "pattern" . | custom-tool
 ```
+
+See [AI Agent Setup](/guide/ai-agent-setup) for complete configuration details.
 
 ## Feature Comparison
 

@@ -280,7 +280,7 @@ ck --serve
 # Then configure in Claude Desktop
 ```
 
-See [MCP Integration](/features/mcp-integration) for complete setup.
+See [MCP Integration](/features/mcp-integration) for complete setup, or [AI Agent Setup](/guide/ai-agent-setup) for configuration best practices with Claude Code and other AI coding assistants.
 
 ### Which Interface?
 
@@ -296,6 +296,7 @@ Read the full [Choosing an Interface](/guide/choosing-interface) guide for detai
 - Learn [basic usage patterns](/guide/basic-usage)
 - Try [TUI mode](/features/tui-mode) for interactive exploration
 - Install [editor extension](/features/editor-integration) for in-editor search
+- Configure [AI agent setup](/guide/ai-agent-setup) for Claude Code and AI assistants
 - Explore [advanced features](/guide/advanced-usage)
 - Set up [MCP integration](/features/mcp-integration)
 - Check the [CLI reference](/reference/cli)
