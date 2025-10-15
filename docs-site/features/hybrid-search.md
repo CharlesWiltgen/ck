@@ -18,9 +18,24 @@ ck --hybrid "connection timeout" src/
 # With relevance scores
 ck --hybrid --scores "cache invalidation" src/
 
-# Filter by confidence
-ck --hybrid --threshold 0.5 "auth" src/
+# Filter by confidence (note: RRF scores are typically 0.01-0.05)
+ck --hybrid --threshold 0.02 "auth" src/
 ```
+
+## ⚠️ Important: Understanding Hybrid Thresholds
+
+### Hybrid search uses a different scoring scale than semantic search
+
+Due to Reciprocal Rank Fusion (RRF) mathematics, hybrid scores typically range from **0.01 to 0.05**, not 0.0 to 1.0 like semantic search. This is a known counterintuitive aspect of RRF scoring.
+
+### Threshold Quick Reference
+
+| Search Mode | Score Range | Typical Threshold | Example |
+|-------------|-------------|-------------------|---------|
+| Semantic | 0.0 - 1.0 | 0.6 (default) | `--sem --threshold 0.7` |
+| Hybrid (RRF) | ~0.01 - 0.05 | 0.016 - 0.025 | `--hybrid --threshold 0.02` |
+
+**Why is this?** RRF combines rankings by summing reciprocal ranks: `1/(60 + rank)`. Since ranks start at 1, the maximum contribution per result is `1/61 ≈ 0.016`, making scores much smaller than normalized similarity scores.
 
 ## How It Works
 
@@ -74,6 +89,7 @@ ck --hybrid "sql injection prevention" src/
 | Requires keywords | ✅ | ❌ | ✅ |
 | False positives | Low | Medium | Low |
 | Speed | Fastest | Fast | Fast |
+| Threshold scale | N/A | 0.0-1.0 | ~0.01-0.05 |
 
 ```bash
 # Keyword: Finds exact "error" text
@@ -91,12 +107,21 @@ ck --hybrid "error handling" src/
 ### Threshold Filtering
 
 ```bash
-# High confidence only
-ck --hybrid --threshold 0.7 "pattern" src/
+# High confidence only (RRF scale)
+ck --hybrid --threshold 0.025 "pattern" src/
 
-# Exploratory (lower confidence)
-ck --hybrid --threshold 0.3 "pattern" src/
+# Exploratory (lower confidence, more results)
+ck --hybrid --threshold 0.015 "pattern" src/
+
+# Very strict (only top matches)
+ck --hybrid --threshold 0.03 "pattern" src/
 ```
+
+::: tip Choosing the Right Threshold
+Start with `--threshold 0.02` for hybrid search. If you get too many results, increase to `0.025` or `0.03`. If too few, decrease to `0.015`.
+
+Use `--scores` to see actual RRF values and calibrate your threshold accordingly.
+:::
 
 ### Result Limiting
 
@@ -105,7 +130,7 @@ ck --hybrid --threshold 0.3 "pattern" src/
 ck --hybrid --topk 10 "pattern" src/
 
 # With threshold
-ck --hybrid --topk 20 --threshold 0.5 "pattern" src/
+ck --hybrid --topk 20 --threshold 0.02 "pattern" src/
 ```
 
 ### Complete Sections
@@ -139,7 +164,7 @@ ck --hybrid "function that does stuff"    # No specific keywords
 ck --hybrid --topk 10 "pattern" src/
 
 # Use threshold to reduce computation
-ck --hybrid --threshold 0.6 "pattern" src/
+ck --hybrid --threshold 0.02 "pattern" src/
 
 # Search specific paths
 ck --hybrid "pattern" src/core/
@@ -185,8 +210,8 @@ ck --hybrid "payment gateway" src/
 ### Too Many Results
 
 ```bash
-# Increase threshold
-ck --hybrid --threshold 0.7 "pattern" src/
+# Increase threshold (RRF scale)
+ck --hybrid --threshold 0.03 "pattern" src/
 
 # Limit count
 ck --hybrid --topk 5 "pattern" src/
@@ -198,8 +223,8 @@ ck --hybrid "specific detailed pattern" src/
 ### Too Few Results
 
 ```bash
-# Lower threshold
-ck --hybrid --threshold 0.3 "pattern" src/
+# Lower threshold (RRF scale)
+ck --hybrid --threshold 0.015 "pattern" src/
 
 # Try semantic-only
 ck --sem "pattern" src/
@@ -211,15 +236,29 @@ ck "pattern" src/
 ### Unexpected Results
 
 ```bash
-# Check with scores
+# Check with scores to see RRF values
 ck --hybrid --scores "pattern" src/
 
-# Try semantic alone
+# Try semantic alone (0-1 scale)
 ck --sem --scores "pattern" src/
 
 # Try keyword alone
 ck "pattern" src/
 ```
+
+### "My threshold doesn't seem to work"
+
+Remember: hybrid search uses RRF scoring (~0.01-0.05), not semantic scoring (0-1).
+
+```bash
+# ❌ Wrong: Using semantic-style threshold
+ck --hybrid --threshold 0.6 "pattern" src/  # Will return 0 results!
+
+# ✅ Correct: Using RRF-scale threshold
+ck --hybrid --threshold 0.02 "pattern" src/
+```
+
+Use `--scores` to see what range your results fall into, then adjust accordingly.
 
 ## Next Steps
 

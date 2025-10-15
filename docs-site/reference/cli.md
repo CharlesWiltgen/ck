@@ -80,7 +80,7 @@ ck --serve
 | Flag | Description |
 |------|-------------|
 | `--topk NUM`, `--limit NUM` | Limit to top NUM results (default: 100) |
-| `--threshold FLOAT` | Minimum relevance score (0.0-1.0, default: 0.6) |
+| `--threshold FLOAT` | Minimum relevance score. **Semantic**: 0.0-1.0 (default: 0.6). **Hybrid**: ~0.01-0.05 (try 0.02). See [Hybrid Search](/features/hybrid-search#understanding-hybrid-thresholds) for details. |
 | `--full-section` | Return complete code sections |
 
 ## Index Management
@@ -147,6 +147,19 @@ ck --sem --threshold 0.7 "pattern" src/
 
 # Top 5 results
 ck --sem --topk 5 "pattern" src/
+```
+
+### Hybrid Search
+
+```bash
+# Combined semantic + keyword search
+ck --hybrid "connection timeout" src/
+
+# With RRF scores (note: scores are ~0.01-0.05)
+ck --hybrid --scores "auth" src/
+
+# Filter by RRF threshold
+ck --hybrid --threshold 0.02 "pattern" src/
 ```
 
 ### Output Formats

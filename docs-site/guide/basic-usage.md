@@ -56,8 +56,8 @@ ck --hybrid "timeout" src/
 # With relevance scores
 ck --hybrid --scores "connection pool" src/
 
-# High-confidence results only
-ck --hybrid --threshold 0.5 "auth" src/
+# High-confidence results only (hybrid uses RRF scores ~0.01-0.05)
+ck --hybrid --threshold 0.025 "auth" src/
 ```
 
 ## Common Flags

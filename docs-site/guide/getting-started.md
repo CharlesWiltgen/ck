@@ -95,8 +95,8 @@ ck --hybrid "connection timeout" src/
 # Show relevance scores
 ck --hybrid --scores "cache invalidation" src/
 
-# Filter by confidence
-ck --hybrid --threshold 0.5 "auth" src/
+# Filter by confidence (hybrid uses RRF scores ~0.01-0.05)
+ck --hybrid --threshold 0.02 "auth" src/
 ```
 
 ## Understanding the Output
