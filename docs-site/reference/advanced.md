@@ -209,6 +209,160 @@ cd ~/project2
 ln -s ~/shared-ck-models ~/.cache/ck/models
 ```
 
+## Intelligent Code Chunking
+
+ck uses tree-sitter for language-aware code parsing and chunking, ensuring semantic boundaries are respected.
+
+### How Chunking Works
+
+**Tree-sitter Query-Based Chunking**:
+
+ck parses code using tree-sitter grammars and extracts meaningful units (functions, classes, methods) as chunks:
+
+```bash
+# View how a file is chunked
+ck --inspect src/auth.rs
+```
+
+**Example output**:
+```
+File: src/auth.rs
+Language: Rust
+Chunks: 12
+
+Chunk 1 (lines 1-15, 342 tokens)
+  Type: function
+  Content: fn authenticate_user(...)
+
+Chunk 2 (lines 17-45, 528 tokens)
+  Type: struct + impl
+  Content: struct AuthService { ... }
+
+Chunk 3 (lines 47-62, 287 tokens)
+  Type: function
+  Content: fn validate_token(...)
+```
+
+### Supported Languages
+
+Tree-sitter chunking available for:
+
+| Language | Chunks | Grammar |
+|----------|--------|---------|
+| Python | Functions, classes, methods | `tree-sitter-python` |
+| JavaScript/TypeScript | Functions, classes, methods, arrow functions | `tree-sitter-javascript`, `tree-sitter-typescript` |
+| Rust | Functions, structs, impls, traits | `tree-sitter-rust` |
+| Go | Functions, methods, structs | `tree-sitter-go` |
+| Ruby | Methods, classes, modules | `tree-sitter-ruby` |
+| Haskell | Functions, type declarations | `tree-sitter-haskell` |
+| C# | Methods, classes, namespaces | `tree-sitter-c-sharp` |
+| Zig | Functions, structs | `tree-sitter-zig` |
+
+Unsupported languages fall back to size-based chunking.
+
+### Chunk-Level Incremental Indexing
+
+**Introduced in v0.7.0**, ck performs incremental indexing at the chunk level:
+
+**How it works**:
+1. Each chunk gets a hash (blake3 of text + trivia)
+2. When files change, only modified chunks are re-embedded
+3. Unchanged chunks reuse cached embeddings
+4. Dramatically faster re-indexing
+
+**Benefits**:
+```bash
+# Initial index: 100 files, 2000 chunks → 60 seconds
+ck --index .
+
+# Edit 1 function in 1 file → only 1 chunk re-embedded
+# Edit file → ~2 seconds (vs 60 for full rebuild)
+ck --index .
+```
+
+**Cache invalidation**:
+- Chunk text changes → re-embed
+- Doc comments change → re-embed
+- Whitespace within function → re-embed
+- Other chunks in same file → cached (not re-embedded)
+
+### Chunk Configuration by Model
+
+Different embedding models use different chunk sizes:
+
+| Model | Chunk Size | Context Window | Use Case |
+|-------|-----------|----------------|----------|
+| BGE-Small | 400 tokens | 512 | Fast, precise functions |
+| Nomic V1.5 | 1024 tokens | 8192 | Large context, whole classes |
+| Jina Code | 1024 tokens | 8192 | Code-specialized, documentation |
+
+**Model selection affects chunking**:
+
+```bash
+# Small chunks (400 tokens) - more granular
+ck --index --model bge-small .
+
+# Large chunks (1024 tokens) - more context
+ck --index --model nomic-v1.5 .
+```
+
+### Trivia Handling
+
+**Leading and trailing trivia** (comments, whitespace) are included in chunks:
+
+**Python example**:
+```python
+# This is a doc comment  ← Trivia (included in chunk hash)
+def authenticate_user(token):  ← Code
+    """Validate user token"""  ← Trivia
+    return validate(token)
+```
+
+**Why trivia matters**:
+- Doc comments change semantic meaning
+- Preserves context for AI understanding
+- Ensures cache invalidation on meaningful changes
+
+### Chunk Inspection
+
+Use `--inspect` to understand chunking:
+
+```bash
+# Single file
+ck --inspect src/main.rs
+
+# Compare chunking across models
+ck --inspect src/auth.py --model bge-small
+ck --inspect src/auth.py --model nomic-v1.5
+```
+
+**What to look for**:
+- **Chunk count**: Too many chunks = consider larger model
+- **Token counts**: Near limit = may be truncated
+- **Chunk boundaries**: Should align with functions/classes
+- **Language detection**: Verify correct parser used
+
+### Handling Edge Cases
+
+**Large functions** (>1024 tokens):
+- Automatically split with overlap (striding)
+- Both chunks reference same location
+- Ensures no content loss
+
+**Mixed-language files** (e.g., HTML with JavaScript):
+- Uses extension-based language detection
+- Falls back to text chunking if ambiguous
+- Can be tuned with explicit patterns
+
+**Generated code**:
+- Often produces many similar chunks
+- Consider excluding in `.ckignore`:
+  ```gitignore
+  *.generated.*
+  *_pb2.py
+  *.pb.go
+  ```
+
 ## Advanced Search Patterns
 
 ### Custom Threshold Strategies

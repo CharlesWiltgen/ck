@@ -2,9 +2,9 @@
 layout: home
 
 hero:
-  name: ck <span style="font-weight:300;">(“seek”)</span>
+  name: ck <span style="font-weight:300;">("seek")</span>
   text: Semantic Code Search
-  tagline: Supercharge your coding LLM with grep-compatible, semantic search that understands what you’re looking for, instead of just string patterns
+  tagline: Four interfaces. One powerful search. CLI, TUI, Editor, or MCP — find code by meaning with intelligent semantic search
   image:
     src: /logo.png
     alt: ck logo
@@ -17,6 +17,16 @@ hero:
       link: https://github.com/BeaconBay/ck
 
 features:
+  - icon: 💻
+    title: Terminal User Interface
+    details: Interactive search with live results, visual score heatmaps, and keyboard-driven navigation. Explore code with TUI mode for instant feedback
+    link: /features/tui-mode
+
+  - icon: 🔌
+    title: Editor Integration
+    details: Native VSCode and Cursor extension. Search without leaving your editor with inline results, instant navigation, and live updates
+    link: /features/editor-integration
+
   - icon: 🤖
     title: AI Agent Integration
     details: Built-in MCP (Model Context Protocol) server for seamless integration with Claude Desktop, Cursor, and any MCP-compatible AI client
@@ -27,11 +37,6 @@ features:
     details: Find code by concept, not keywords. Search for "retry logic" and find backoff, circuit breakers, and related patterns even without exact matches
     link: /features/semantic-search
 
-  - icon: ⚡
-    title: Drop-in grep Replacement
-    details: All your muscle memory works. Same flags, same behavior, same output format — plus semantic understanding when you need it
-    link: /features/grep-compatibility
-
   - icon: 🎯
     title: Hybrid Search
     details: Combine keyword precision with semantic understanding using Reciprocal Rank Fusion for best-of-both-worlds search results
@@ -39,8 +44,13 @@ features:
 
   - icon: 🚀
     title: Blazing Fast
-    details: ~1M LOC indexed in under 2 minutes. Sub-500ms queries. Automatic delta indexing only processes changed files
+    details: ~1M LOC indexed in under 2 minutes. Sub-500ms queries. Chunk-level incremental indexing only re-embeds what changed
     link: /guide/basic-usage
+
+  - icon: ⚡
+    title: Drop-in grep Replacement
+    details: All your muscle memory works. Same flags, same behavior, same output format — plus semantic understanding when you need it
+    link: /features/grep-compatibility
 
   - icon: 📦
     title: Completely Offline
@@ -54,17 +64,22 @@ features:
 # Install from crates.io
 cargo install ck-search
 
-# Just search - ck builds and updates indexes automatically
+# CLI: Command-line search (grep-compatible)
 ck --sem "error handling" src/
-ck --sem "authentication logic" src/
-ck --sem "database connection pooling" src/
-
-# Traditional grep-compatible search still works
-ck -n "TODO" *.rs
-ck -R "TODO|FIXME" .
-
-# Combine both: semantic relevance + keyword filtering
 ck --hybrid "connection timeout" src/
+ck -n "TODO" *.rs
+
+# TUI: Interactive terminal UI
+ck-tui
+# Type queries, see live results, navigate with ↑/↓
+
+# Editor: VSCode/Cursor extension
+code --install-extension ck-search
+# Press Cmd+Shift+; to search
+
+# MCP: AI agent integration
+ck --serve
+# Configure in Claude Desktop for AI-assisted search
 ```
 
 ## Why ck?
@@ -94,11 +109,14 @@ cargo install --path ck-cli
 
 ## Next Steps
 
-<div class=”vp-doc”>
+<div class="vp-doc">
 
 - [**Getting Started Guide**](/guide/getting-started) — Installation and first search
-- [**Basic Usage**](/guide/basic-usage) — Common patterns and workflows
+- [**Choosing an Interface**](/guide/choosing-interface) — CLI, TUI, Editor, or MCP?
+- [**TUI Mode**](/features/tui-mode) — Interactive terminal interface
+- [**Editor Integration**](/features/editor-integration) — VSCode/Cursor extension
 - [**MCP Integration**](/features/mcp-integration) — Connect with AI agents
+- [**Basic Usage**](/guide/basic-usage) — Common patterns and workflows
 - [**CLI Reference**](/reference/cli) — Complete command-line reference
 
 </div>

@@ -60,6 +60,86 @@ ck --hybrid --scores "connection pool" src/
 ck --hybrid --threshold 0.025 "auth" src/
 ```
 
+## Using Different Interfaces
+
+While the examples above show CLI usage, ck offers multiple interfaces for different workflows.
+
+### Terminal User Interface (TUI)
+
+For interactive exploration, use the TUI:
+
+```bash
+# Launch interactive mode
+ck-tui
+```
+
+In TUI mode:
+- **Live search**: Results update as you type
+- **Visual navigation**: Use ↑/↓ to browse, → for preview
+- **Mode switching**: Toggle between semantic/regex/hybrid with keyboard
+- **Score visualization**: Color-coded heatmaps show relevance
+- **Quick file opening**: Press Enter to open in editor
+
+**Common TUI workflows**:
+
+```bash
+# Explore unfamiliar codebase
+ck-tui
+# Type: "authentication"
+# Navigate results, preview code
+# Press Enter to open interesting files
+
+# Refine queries interactively
+ck-tui
+# Start broad: "api"
+# Too many results? Refine: "api endpoint handler"
+# Switch to hybrid for better precision
+```
+
+See [TUI Mode](/features/tui-mode) for complete keyboard shortcuts and features.
+
+### Editor Extension (VSCode/Cursor)
+
+Search without leaving your editor:
+
+```
+1. Press Cmd+Shift+; (Ctrl+Shift+; on Windows/Linux)
+2. Type query: "database connection"
+3. See live results with scores
+4. Click result to jump to code
+```
+
+**Common editor workflows**:
+
+- **Search selection**: Select code, press `Cmd+Shift+'` to find similar
+- **Quick lookups**: Search while debugging or reviewing code
+- **Pattern discovery**: Find all implementations of a pattern
+
+See [Editor Integration](/features/editor-integration) for setup.
+
+### MCP Server (AI Agents)
+
+For AI-assisted code exploration with Claude Desktop:
+
+```bash
+# Start MCP server
+ck --serve
+
+# Then in Claude Desktop:
+# "Find all error handling code and explain the patterns"
+```
+
+See [MCP Integration](/features/mcp-integration) for configuration.
+
+### Choosing the Right Interface
+
+- **CLI**: Best for scripts, pipelines, automation
+- **TUI**: Best for exploration, discovery, query refinement
+- **Editor**: Best for in-editor workflow, zero context switch
+- **MCP**: Best for AI-assisted understanding
+
+Read [Choosing an Interface](/guide/choosing-interface) for detailed comparison.
+
 ## Common Flags
 
 ### Output Control
@@ -361,7 +441,10 @@ ck --sem --full-section "$(xsel -b)" src/
 
 ## Next Steps
 
+- Try [TUI mode](/features/tui-mode) for interactive exploration
+- Install [editor extension](/features/editor-integration) for in-editor search
 - Explore [advanced features](/guide/advanced-usage)
 - Learn about [semantic search](/features/semantic-search) in depth
 - Try [MCP integration](/features/mcp-integration) with AI agents
 - Check [CLI reference](/reference/cli) for all options
+- Read [Choosing an Interface](/guide/choosing-interface) for workflow guidance

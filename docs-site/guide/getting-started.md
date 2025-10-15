@@ -218,9 +218,84 @@ ck --index --model jina-code .
 
 See [Embedding Models](/reference/models) for detailed comparison.
 
+## Choosing Your Interface
+
+ck offers multiple interfaces for different workflows:
+
+### Command-Line Interface (CLI)
+
+The default mode you've been using — perfect for scripts and pipelines:
+
+```bash
+ck --sem "pattern" src/
+```
+
+### Terminal User Interface (TUI)
+
+Interactive exploration with live results:
+
+```bash
+# Launch TUI mode
+ck-tui
+
+# Then:
+# - Type queries and see live results
+# - Navigate with ↑/↓
+# - Preview with →
+# - Open files with Enter
+```
+
+The TUI provides:
+- Live search as you type
+- Visual result previews
+- Keyboard-driven navigation
+- Score heatmaps
+- Multiple preview modes
+
+See [TUI Mode](/features/tui-mode) for complete documentation.
+
+### Editor Integration (VSCode/Cursor)
+
+Search without leaving your editor:
+
+```bash
+# Install extension (see docs for details)
+code --install-extension ck-search
+
+# Then use:
+# - Cmd+Shift+; to open search
+# - Cmd+Shift+' to search selection
+```
+
+See [Editor Integration](/features/editor-integration) for setup and usage.
+
+### MCP Server (AI Agents)
+
+Integrate with Claude Desktop and other AI tools:
+
+```bash
+# Start MCP server
+ck --serve
+
+# Then configure in Claude Desktop
+```
+
+See [MCP Integration](/features/mcp-integration) for complete setup.
+
+### Which Interface?
+
+- **CLI**: Scripts, automation, grep replacement
+- **TUI**: Interactive exploration, code discovery
+- **Editor**: In-editor search, zero context switch
+- **MCP**: AI-assisted code understanding
+
+Read the full [Choosing an Interface](/guide/choosing-interface) guide for detailed comparison.
+
 ## Next Steps
 
 - Learn [basic usage patterns](/guide/basic-usage)
+- Try [TUI mode](/features/tui-mode) for interactive exploration
+- Install [editor extension](/features/editor-integration) for in-editor search
 - Explore [advanced features](/guide/advanced-usage)
 - Set up [MCP integration](/features/mcp-integration)
 - Check the [CLI reference](/reference/cli)

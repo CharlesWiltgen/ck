@@ -28,6 +28,7 @@ export default defineConfig({
           items: [
             { text: 'Introduction', link: '/guide/introduction' },
             { text: 'Installation', link: '/guide/getting-started' },
+            { text: 'Choosing an Interface', link: '/guide/choosing-interface' },
             { text: 'Basic Usage', link: '/guide/basic-usage' },
             { text: 'Advanced Usage', link: '/guide/advanced-usage' }
           ]
@@ -35,6 +36,7 @@ export default defineConfig({
         {
           text: 'Resources',
           items: [
+            { text: 'Changelog', link: '/guide/changelog' },
             { text: 'FAQ', link: '/guide/faq' },
             { text: 'Known Limitations', link: '/guide/limitations' },
             { text: 'Roadmap', link: '/guide/roadmap' }
@@ -43,10 +45,17 @@ export default defineConfig({
       ],
       '/features/': [
         {
-          text: 'Features',
+          text: 'Interfaces',
+          items: [
+            { text: 'Terminal UI (TUI)', link: '/features/tui-mode' },
+            { text: 'Editor Integration', link: '/features/editor-integration' },
+            { text: 'MCP Integration', link: '/features/mcp-integration' }
+          ]
+        },
+        {
+          text: 'Search Capabilities',
           items: [
             { text: 'Semantic Search', link: '/features/semantic-search' },
-            { text: 'MCP Integration', link: '/features/mcp-integration' },
             { text: 'Hybrid Search', link: '/features/hybrid-search' },
             { text: 'grep Compatibility', link: '/features/grep-compatibility' }
           ]

@@ -104,14 +104,18 @@ Combined semantic and keyword search using Reciprocal Rank Fusion.
 - `path` (string, optional): Directory to search
 - `page_size` (integer, optional): Results per page
 - `top_k` (integer, optional): Maximum total results
-- `threshold` (number, optional): Minimum relevance score
+- `threshold` (number, optional): Minimum relevance score (RRF scale: ~0.01-0.05)
+
+::: warning Hybrid Threshold Scale
+Hybrid search uses Reciprocal Rank Fusion (RRF) scoring, producing values in the 0.01-0.05 range, not 0.0-1.0 like semantic search. Typical thresholds: 0.016-0.025. See [Hybrid Search](/features/hybrid-search#understanding-hybrid-thresholds) for details.
+:::
 
 **Example:**
 ```python
 response = await client.call_tool("hybrid_search", {
     "query": "connection timeout",
     "path": "/path/to/code",
-    "threshold": 0.5
+    "threshold": 0.02  # Note: RRF scale, not 0-1
 })
 ```
 
@@ -143,6 +147,36 @@ await client.call_tool("reindex", {
     "model": "nomic-v1.5"
 })
 ```
+
+### `default_ckignore`
+
+Retrieve default `.ckignore` patterns used by ck.
+
+**Parameters:**
+None
+
+**Returns:**
+- String containing default `.ckignore` content
+
+**Use case:**
+Useful for editor extensions and tools that need to display or work with ck's default exclusion patterns without parsing the backend code.
+
+**Example:**
+```python
+patterns = await client.call_tool("default_ckignore", {})
+# Returns multi-line string with default patterns:
+# *.png
+# *.jpg
+# node_modules/
+# ...
+```
+
+::: tip CLI Alternative
+You can also get default patterns via CLI:
+```bash
+ck --print-default-ckignore
+```
+:::
 
 ### `health_check`
 
