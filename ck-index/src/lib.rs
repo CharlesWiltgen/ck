@@ -1,5 +1,7 @@
 use anyhow::Result;
-use ck_core::{FileMetadata, Language, Span, compute_file_hash, get_sidecar_path};
+use ck_core::{
+    FileMetadata, Language, Span, compute_chunk_hash, compute_file_hash, get_sidecar_path,
+};
 use ignore::{WalkBuilder, overrides::OverrideBuilder};
 use rayon::prelude::*;
 use serde::{Deserialize, Serialize};
@@ -106,6 +108,21 @@ pub struct ChunkEntry {
     pub span: Span,
     pub embedding: Option<Vec<f32>>,
     pub chunk_type: Option<String>, // "function", "class", "method", or None for generic
+    #[serde(default)]
+    pub breadcrumb: Option<String>,
+    #[serde(default)]
+    pub ancestry: Option<Vec<String>>,
+    #[serde(default)]
+    pub byte_length: Option<usize>,
+    #[serde(default)]
+    pub estimated_tokens: Option<usize>,
+    #[serde(default)]
+    pub leading_trivia: Option<Vec<String>>,
+    #[serde(default)]
+    pub trailing_trivia: Option<Vec<String>>,
+    /// Blake3 hash of the chunk text for incremental indexing
+    #[serde(default)]
+    pub chunk_hash: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -118,6 +135,11 @@ pub struct IndexManifest {
     pub embedding_model: Option<String>,
     /// Embedding model dimensions (for validation)
     pub embedding_dimensions: Option<usize>,
+    /// Chunk hash version for incremental indexing
+    /// - v1 = blake3 of chunk text only
+    /// - v2 = blake3 of chunk text + leading_trivia + trailing_trivia
+    #[serde(default)]
+    pub chunk_hash_version: Option<u32>,
 }
 
 impl Default for IndexManifest {
@@ -134,6 +156,7 @@ impl Default for IndexManifest {
             files: HashMap::new(),
             embedding_model: None, // Default to None for backward compatibility
             embedding_dimensions: None,
+            chunk_hash_version: Some(2), // v2 = blake3 of chunk text + trivia
         }
     }
 }
@@ -243,7 +266,21 @@ pub async fn index_directory(
             default_config.name.clone()
         };
 
-        // Set the model info in the manifest for new indexes
+        // Check for model compatibility with existing index
+        if let Some(existing_model) = &manifest.embedding_model
+            && existing_model != &selected_model
+        {
+            // Model mismatch - this is an error to prevent reusing embeddings from a different model
+            return Err(anyhow::anyhow!(
+                "Model mismatch: Index was created with '{}', but you're trying to use '{}'. \
+                Please run 'ck --clean {}' to remove the old index, then rerun with the new model.",
+                existing_model,
+                selected_model,
+                path.display()
+            ));
+        }
+
+        // Set the model info in the manifest
         manifest.embedding_model = Some(selected_model.clone());
         if let Some(model_name) = model {
             if let Some(model_config) = model_registry.get_model(model_name) {
@@ -879,11 +916,15 @@ pub async fn smart_update_index_with_detailed_progress(
                     files_to_update.len(),
                 )
             } else {
-                index_single_file(file_path, path, Some(&mut embedder))
+                index_single_file_with_progress(file_path, path, Some(&mut embedder), None, 0, 1)
             };
 
             match result {
-                Ok(entry) => {
+                Ok((entry, file_chunks_reused, file_chunks_embedded)) => {
+                    // Aggregate chunk statistics
+                    stats.chunks_reused += file_chunks_reused;
+                    stats.chunks_embedded += file_chunks_embedded;
+
                     // Write sidecar immediately
                     let sidecar_path = get_sidecar_path(path, file_path);
                     save_index_entry(&sidecar_path, &entry)?;
@@ -1025,7 +1066,9 @@ fn index_single_file(
     repo_root: &Path,
     embedder: Option<&mut Box<dyn ck_embed::Embedder>>,
 ) -> Result<IndexEntry> {
-    index_single_file_with_progress(file_path, repo_root, embedder, None, 0, 1)
+    let (entry, _chunks_reused, _chunks_embedded) =
+        index_single_file_with_progress(file_path, repo_root, embedder, None, 0, 1)?;
+    Ok(entry)
 }
 
 fn index_single_file_with_progress(
@@ -1035,11 +1078,36 @@ fn index_single_file_with_progress(
     detailed_progress: Option<&DetailedProgressCallback>,
     file_index: usize,
     total_files: usize,
-) -> Result<IndexEntry> {
+) -> Result<(IndexEntry, usize, usize)> {
     // Skip binary files to avoid UTF-8 warnings
     if !is_text_file(file_path) {
         return Err(anyhow::anyhow!("Binary file, skipping"));
     }
+
+    // Build chunk cache from old sidecar if it exists (for chunk reuse)
+    let chunk_cache: HashMap<String, Vec<f32>> = if embedder.is_some() {
+        let sidecar_path = get_sidecar_path(repo_root, file_path);
+        if sidecar_path.exists() {
+            match load_index_entry(&sidecar_path) {
+                Ok(old_entry) => old_entry
+                    .chunks
+                    .into_iter()
+                    .filter_map(|chunk| {
+                        if let (Some(hash), Some(embedding)) = (chunk.chunk_hash, chunk.embedding) {
+                            Some((hash, embedding))
+                        } else {
+                            None
+                        }
+                    })
+                    .collect(),
+                Err(_) => HashMap::new(),
+            }
+        } else {
+            HashMap::new()
+        }
+    } else {
+        HashMap::new()
+    };
 
     // Preprocess file (extracts PDFs to cache, returns path to readable content)
     let content_path = preprocess_file(file_path, repo_root)?;
@@ -1072,6 +1140,10 @@ fn index_single_file_with_progress(
     let model_name = embedder.as_ref().map(|e| e.model_name());
     let chunks = ck_chunk::chunk_text_with_model(&content, lang, model_name)?;
 
+    // Track chunk reuse statistics
+    let mut chunks_reused = 0;
+    let mut chunks_embedded = 0;
+
     let chunk_entries: Vec<ChunkEntry> = if let Some(embedder) = embedder {
         let total_chunks = chunks.len();
         let file_name = file_path
@@ -1103,15 +1175,51 @@ fn index_single_file_with_progress(
                     chunk_size: chunk.text.len(),
                 });
 
-                // Embed single chunk
-                let embeddings = embedder.embed(std::slice::from_ref(&chunk.text))?;
-                let embedding = embeddings.into_iter().next().ok_or_else(|| {
-                    anyhow::anyhow!(
-                        "Embedder returned empty results for chunk {} in file {:?}. This may indicate an issue with the embedding model or chunk content.",
-                        chunk_index,
-                        file_path
-                    )
-                })?;
+                // Compute chunk hash for cache lookup or storage
+                // Include trivia so that doc comment changes invalidate the cache
+                let chunk_hash = compute_chunk_hash(
+                    &chunk.text,
+                    &chunk.metadata.leading_trivia,
+                    &chunk.metadata.trailing_trivia,
+                );
+
+                // Check cache first, but validate dimension matches current embedder
+                let expected_dim = embedder.dim();
+                let embedding = if let Some(cached_embedding) = chunk_cache.get(&chunk_hash) {
+                    if cached_embedding.len() == expected_dim {
+                        // Dimension matches, safe to reuse
+                        chunks_reused += 1;
+                        cached_embedding.clone()
+                    } else {
+                        // Dimension mismatch, re-embed (model changed)
+                        chunks_embedded += 1;
+                        tracing::warn!(
+                            "Chunk in {:?} has cached embedding with dimension {} but current model expects {}. Re-embedding.",
+                            file_path,
+                            cached_embedding.len(),
+                            expected_dim
+                        );
+                        let embeddings = embedder.embed(std::slice::from_ref(&chunk.text))?;
+                        embeddings.into_iter().next().ok_or_else(|| {
+                            anyhow::anyhow!(
+                                "Embedder returned empty results for chunk {} in file {:?}. This may indicate an issue with the embedding model or chunk content.",
+                                chunk_index,
+                                file_path
+                            )
+                        })?
+                    }
+                } else {
+                    // No cache hit, compute embedding
+                    chunks_embedded += 1;
+                    let embeddings = embedder.embed(std::slice::from_ref(&chunk.text))?;
+                    embeddings.into_iter().next().ok_or_else(|| {
+                        anyhow::anyhow!(
+                            "Embedder returned empty results for chunk {} in file {:?}. This may indicate an issue with the embedding model or chunk content.",
+                            chunk_index,
+                            file_path
+                        )
+                    })?
+                };
 
                 let chunk_type_str = match chunk.chunk_type {
                     ck_chunk::ChunkType::Function => Some("function".to_string()),
@@ -1121,37 +1229,110 @@ fn index_single_file_with_progress(
                     ck_chunk::ChunkType::Text => None,
                 };
 
+                let breadcrumb = chunk.metadata.breadcrumb.clone();
+                let ancestry = if chunk.metadata.ancestry.is_empty() {
+                    None
+                } else {
+                    Some(chunk.metadata.ancestry.clone())
+                };
+                let leading_trivia = if chunk.metadata.leading_trivia.is_empty() {
+                    None
+                } else {
+                    Some(chunk.metadata.leading_trivia.clone())
+                };
+                let trailing_trivia = if chunk.metadata.trailing_trivia.is_empty() {
+                    None
+                } else {
+                    Some(chunk.metadata.trailing_trivia.clone())
+                };
+
                 chunk_entries.push(ChunkEntry {
                     span: chunk.span,
                     embedding: Some(embedding),
                     chunk_type: chunk_type_str,
+                    breadcrumb,
+                    ancestry,
+                    byte_length: Some(chunk.metadata.byte_length),
+                    estimated_tokens: Some(chunk.metadata.estimated_tokens),
+                    leading_trivia,
+                    trailing_trivia,
+                    chunk_hash: Some(chunk_hash),
                 });
             }
             chunk_entries
         } else {
             // Fallback to batch processing for backward compatibility
-            let chunk_texts: Vec<String> = chunks.iter().map(|c| c.text.clone()).collect();
-            tracing::info!(
-                "Computing embeddings for {} chunks in {:?}",
-                chunk_texts.len(),
-                file_path
-            );
-            let embeddings = embedder.embed(&chunk_texts)?;
+            // First, check which chunks have cached embeddings with dimension validation
+            let expected_dim = embedder.dim();
+            let mut chunks_to_embed = Vec::new();
+            let mut chunk_results: Vec<(ck_chunk::Chunk, String, Option<Vec<f32>>)> = Vec::new();
 
-            // Validate that embedder returned the expected number of embeddings
-            if embeddings.len() != chunks.len() {
-                return Err(anyhow::anyhow!(
-                    "Embedder returned {} embeddings for {} chunks in file {:?}. Expected equal counts.",
-                    embeddings.len(),
-                    chunks.len(),
-                    file_path
-                ));
+            for chunk in chunks {
+                // Include trivia so that doc comment changes invalidate the cache
+                let chunk_hash = compute_chunk_hash(
+                    &chunk.text,
+                    &chunk.metadata.leading_trivia,
+                    &chunk.metadata.trailing_trivia,
+                );
+                if let Some(cached_embedding) = chunk_cache.get(&chunk_hash) {
+                    if cached_embedding.len() == expected_dim {
+                        // Dimension matches, safe to reuse
+                        chunks_reused += 1;
+                        chunk_results.push((chunk, chunk_hash, Some(cached_embedding.clone())));
+                    } else {
+                        // Dimension mismatch, need to re-embed
+                        tracing::warn!(
+                            "Chunk in {:?} has cached embedding with dimension {} but current model expects {}. Re-embedding.",
+                            file_path,
+                            cached_embedding.len(),
+                            expected_dim
+                        );
+                        chunks_to_embed.push((chunk.text.clone(), chunk_results.len()));
+                        chunk_results.push((chunk, chunk_hash, None));
+                    }
+                } else {
+                    // No cache hit, need to embed
+                    chunks_to_embed.push((chunk.text.clone(), chunk_results.len()));
+                    chunk_results.push((chunk, chunk_hash, None));
+                }
             }
 
-            chunks
+            // Batch embed only the chunks without cache hits
+            if !chunks_to_embed.is_empty() {
+                let texts: Vec<String> = chunks_to_embed
+                    .iter()
+                    .map(|(text, _)| text.clone())
+                    .collect();
+                tracing::info!(
+                    "Computing embeddings for {}/{} chunks in {:?} ({} reused from cache)",
+                    texts.len(),
+                    chunk_results.len(),
+                    file_path,
+                    chunks_reused
+                );
+                let embeddings = embedder.embed(&texts)?;
+
+                if embeddings.len() != chunks_to_embed.len() {
+                    return Err(anyhow::anyhow!(
+                        "Embedder returned {} embeddings for {} chunks in file {:?}. Expected equal counts.",
+                        embeddings.len(),
+                        chunks_to_embed.len(),
+                        file_path
+                    ));
+                }
+
+                chunks_embedded += embeddings.len();
+
+                // Fill in the computed embeddings
+                for ((_, result_idx), embedding) in chunks_to_embed.into_iter().zip(embeddings) {
+                    chunk_results[result_idx].2 = Some(embedding);
+                }
+            }
+
+            chunk_results
                 .into_iter()
-                .zip(embeddings)
-                .map(|(chunk, embedding)| {
+                .map(|(chunk, chunk_hash, embedding)| {
+                    let embedding = embedding.expect("All chunks should have embeddings by now");
                     let chunk_type_str = match chunk.chunk_type {
                         ck_chunk::ChunkType::Function => Some("function".to_string()),
                         ck_chunk::ChunkType::Class => Some("class".to_string()),
@@ -1159,10 +1340,33 @@ fn index_single_file_with_progress(
                         ck_chunk::ChunkType::Module => Some("module".to_string()),
                         ck_chunk::ChunkType::Text => None,
                     };
+                    let breadcrumb = chunk.metadata.breadcrumb.clone();
+                    let ancestry = if chunk.metadata.ancestry.is_empty() {
+                        None
+                    } else {
+                        Some(chunk.metadata.ancestry.clone())
+                    };
+                    let leading_trivia = if chunk.metadata.leading_trivia.is_empty() {
+                        None
+                    } else {
+                        Some(chunk.metadata.leading_trivia.clone())
+                    };
+                    let trailing_trivia = if chunk.metadata.trailing_trivia.is_empty() {
+                        None
+                    } else {
+                        Some(chunk.metadata.trailing_trivia.clone())
+                    };
                     ChunkEntry {
                         span: chunk.span,
                         embedding: Some(embedding),
                         chunk_type: chunk_type_str,
+                        breadcrumb,
+                        ancestry,
+                        byte_length: Some(chunk.metadata.byte_length),
+                        estimated_tokens: Some(chunk.metadata.estimated_tokens),
+                        leading_trivia,
+                        trailing_trivia,
+                        chunk_hash: Some(chunk_hash),
                     }
                 })
                 .collect()
@@ -1179,28 +1383,67 @@ fn index_single_file_with_progress(
                     ck_chunk::ChunkType::Module => Some("module".to_string()),
                     ck_chunk::ChunkType::Text => None,
                 };
+                let breadcrumb = chunk.metadata.breadcrumb.clone();
+                let ancestry = if chunk.metadata.ancestry.is_empty() {
+                    None
+                } else {
+                    Some(chunk.metadata.ancestry.clone())
+                };
+                let leading_trivia = if chunk.metadata.leading_trivia.is_empty() {
+                    None
+                } else {
+                    Some(chunk.metadata.leading_trivia.clone())
+                };
+                let trailing_trivia = if chunk.metadata.trailing_trivia.is_empty() {
+                    None
+                } else {
+                    Some(chunk.metadata.trailing_trivia.clone())
+                };
                 ChunkEntry {
                     span: chunk.span,
                     embedding: None,
                     chunk_type: chunk_type_str,
+                    breadcrumb,
+                    ancestry,
+                    byte_length: Some(chunk.metadata.byte_length),
+                    estimated_tokens: Some(chunk.metadata.estimated_tokens),
+                    leading_trivia: leading_trivia.clone(),
+                    trailing_trivia: trailing_trivia.clone(),
+                    chunk_hash: Some(compute_chunk_hash(
+                        &chunk.text,
+                        &chunk.metadata.leading_trivia,
+                        &chunk.metadata.trailing_trivia,
+                    )),
                 }
             })
             .collect()
     };
 
-    Ok(IndexEntry {
-        metadata: file_metadata,
-        chunks: chunk_entries,
-    })
+    Ok((
+        IndexEntry {
+            metadata: file_metadata,
+            chunks: chunk_entries,
+        },
+        chunks_reused,
+        chunks_embedded,
+    ))
 }
 
 fn load_or_create_manifest(path: &Path) -> Result<IndexManifest> {
-    if path.exists() {
+    let mut manifest = if path.exists() {
         let data = fs::read(path)?;
-        Ok(serde_json::from_slice(&data)?)
+        serde_json::from_slice(&data)?
     } else {
-        Ok(IndexManifest::default())
+        IndexManifest::default()
+    };
+
+    // Ensure chunk_hash_version is set to v2 if not already set
+    // This handles manifests created before the field existed
+    if manifest.chunk_hash_version.is_none() {
+        manifest.chunk_hash_version = Some(2);
     }
+
+    Ok(manifest)
 }
 
 fn normalize_manifest_paths(manifest: &mut IndexManifest, repo_root: &Path) {
@@ -1423,6 +1666,8 @@ pub struct UpdateStats {
     pub files_up_to_date: usize,
     pub files_errored: usize,
     pub orphaned_files_removed: usize,
+    pub chunks_reused: usize,
+    pub chunks_embedded: usize,
 }
 
 #[cfg(test)]

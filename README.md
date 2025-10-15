@@ -1,5 +1,11 @@
 # ck - Semantic Code Search
 
+[![CI](https://github.com/BeaconBay/ck/actions/workflows/ci.yaml/badge.svg)](https://github.com/BeaconBay/ck/actions/workflows/ci.yaml)
+[![Crates.io](https://img.shields.io/crates/v/ck-search.svg)](https://crates.io/crates/ck-search)
+[![Downloads](https://img.shields.io/crates/d/ck-search.svg)](https://crates.io/crates/ck-search)
+[![License](https://img.shields.io/badge/license-MIT%2FApache--2.0-blue.svg)](LICENSE-MIT)
+[![MSRV](https://img.shields.io/badge/rust-1.88%2B-blue.svg)](https://www.rust-lang.org)
+
 **ck (seek)** finds code by meaning, not just keywords. It's grep that understands what you're looking for — search for "error handling" and find try/catch blocks, error returns, and exception handling code even when those exact words aren't present.
 
 ## 🚀 Quick Start
@@ -67,6 +73,29 @@ claude mcp list  # or use /mcp in Claude Code
 
 **Built-in Pagination:** Handles large result sets gracefully with page_size controls, cursors, and snippet length management.
 
+### 🎨 **Interactive TUI (Terminal User Interface)**
+Launch an interactive search interface with real-time results and multiple preview modes:
+
+```bash
+# Start TUI for current directory
+ck --tui
+
+# Start with initial query
+ck --tui "error handling"
+```
+
+**Features:**
+- **Multiple Search Modes**: Toggle between Semantic, Regex, and Hybrid search with `Tab`
+- **Preview Modes**: Switch between Heatmap, Syntax highlighting, and Chunk view with `Ctrl+V`
+- **View Options**: Toggle between snippet and full-file view with `Ctrl+F`
+- **Multi-select**: Select multiple files with `Ctrl+Space`, open all in editor with `Enter`
+- **Search History**: Navigate with `Ctrl+Up/Down`
+- **Editor Integration**: Opens files in `$EDITOR` with line numbers (Vim, VS Code, Cursor, etc.)
+- **Progress Tracking**: Live indexing progress with file and chunk counts
+- **Config Persistence**: Preferences saved to `~/.config/ck/tui.json`
+
+See [TUI.md](TUI.md) for keyboard shortcuts and detailed usage.
+
 ### 🔍 **Semantic Search**
 Find code by concept, not keywords. Understands synonyms, related terms, and conceptual similarity:
 
@@ -100,8 +129,13 @@ ck --hybrid --scores "cache" src/   # Show relevance scores with color highlight
 ck --hybrid --threshold 0.02 query  # Filter by minimum relevance
 ```
 
-### ⚙️ **Automatic Delta Indexing**
-Semantic and hybrid searches transparently create and refresh their indexes before running. The first search builds what it needs; subsequent searches only touch files that changed.
+### ⚙️ **Automatic Delta Indexing with Chunk-Level Caching**
+Semantic and hybrid searches transparently create and refresh their indexes before running. The first search builds what it needs; subsequent searches intelligently reuse cached embeddings:
+
+- **Chunk-level incremental indexing**: Only changed chunks are re-embedded (80-90% cache hit rate for typical code changes)
+- **Content-aware invalidation**: Doc comments and whitespace changes properly invalidate cache
+- **Model consistency**: Prevents silent embedding corruption when switching models
+- **Smart caching**: Hash-based invalidation using blake3(text + trivia) for reliable change detection
 
 ### 📁 **Smart File Filtering**
 Automatically excludes cache directories, build artifacts, and respects `.gitignore` and `.ckignore` files:
@@ -191,6 +225,13 @@ ck --sem --scores "machine learning" docs/
 # [0.847] ./ai_guide.txt: Machine learning introduction...
 # [0.732] ./statistics.txt: Statistical learning methods...
 ```
+
+
+### Language Coverage
+
+| Language | Indexing | Chunking | AST-aware | Notes |
+|----------|----------|----------|-----------|-------|
+| Zig | ✅ | ✅ | ✅ | contributed by [@Nevon](https://github.com/Nevon) (PR #72) |
 
 ### Model Selection
 
@@ -331,6 +372,7 @@ ck --json --sem "public API" src/ | generate_docs.py
 **Field-tested on real codebases:**
 
 - **Indexing:** ~1M LOC in under 2 minutes
+- **Incremental indexing:** 80-90% cache hit rate for typical code changes (only changed chunks re-embedded)
 - **Search:** Sub-500ms queries on typical codebases
 - **Index size:** ~2x source code size with compression
 - **Memory:** Efficient streaming for large repositories
@@ -341,12 +383,13 @@ ck --json --sem "public API" src/ | generate_docs.py
 ck uses a modular Rust workspace:
 
 - **`ck-cli`** - Command-line interface and MCP server
+- **`ck-tui`** - Interactive terminal user interface (ratatui-based)
 - **`ck-core`** - Shared types, configuration, and utilities
 - **`ck-engine`** - Search engine implementations (regex, semantic, hybrid)
 - **`ck-index`** - File indexing, hashing, and sidecar management
 - **`ck-embed`** - Text embedding providers (FastEmbed, API backends)
 - **`ck-ann`** - Approximate nearest neighbor search indices
-- **`ck-chunk`** - Text segmentation and language-aware parsing
+- **`ck-chunk`** - Text segmentation and language-aware parsing ([query-based chunking](docs/QUERY_BASED_CHUNKING.md))
 - **`ck-models`** - Model registry and configuration management
 
 ### Index Storage
@@ -415,8 +458,9 @@ The CI pipeline runs on Ubuntu, Windows, and macOS to ensure cross-platform comp
 
 ## 🗺 Roadmap
 
-### Current (v0.5+)
+### Current (v0.7+)
 - ✅ MCP (Model Context Protocol) server for AI agent integration
+- ✅ Chunk-level incremental indexing with smart embedding reuse
 - ✅ grep-compatible CLI with semantic search and file listing flags
 - ✅ FastEmbed integration with BGE models and enhanced model selection
 - ✅ File exclusion patterns and glob support
@@ -424,7 +468,6 @@ The CI pipeline runs on Ubuntu, Windows, and macOS to ensure cross-platform comp
 - ✅ Tree-sitter parsing and intelligent chunking for 7+ languages
 - ✅ Complete code section extraction (`--full-section`)
 - ✅ Clean stdout/stderr separation for reliable scripting
-- ✅ Incremental index updates with hash-based change detection
 - ✅ Token-aware chunking with HuggingFace tokenizers
 - ✅ Published to crates.io (`cargo install ck-search`)
 

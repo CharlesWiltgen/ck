@@ -1,3 +1,5 @@
+pub mod heatmap;
+
 use serde::{Deserialize, Serialize};
 use std::path::{Path, PathBuf};
 use thiserror::Error;
@@ -280,6 +282,12 @@ pub enum SearchMode {
 }
 
 #[derive(Debug, Clone)]
+pub struct IncludePattern {
+    pub path: PathBuf,
+    pub is_dir: bool,
+}
+
+#[derive(Debug, Clone)]
 pub struct SearchOptions {
     pub mode: SearchMode,
     pub query: String,
@@ -303,6 +311,7 @@ pub struct SearchOptions {
     pub files_with_matches: bool,
     pub files_without_matches: bool,
     pub exclude_patterns: Vec<String>,
+    pub include_patterns: Vec<IncludePattern>,
     pub respect_gitignore: bool,
     pub full_section: bool,
     // Enhanced embedding options (search-time only)
@@ -358,6 +367,7 @@ impl Default for SearchOptions {
             files_with_matches: false,
             files_without_matches: false,
             exclude_patterns: get_default_exclude_patterns(),
+            include_patterns: Vec::new(),
             respect_gitignore: true,
             full_section: false,
             // Enhanced embedding options (search-time only)
@@ -511,6 +521,52 @@ pub fn create_ckignore_if_missing(repo_root: &Path) -> Result<bool> {
     Ok(true) // Created new file
 }
 
+/// Build exclusion patterns with proper priority ordering
+///
+/// This centralizes the pattern building logic used across CLI, TUI, and MCP interfaces
+/// to prevent drift and ensure consistent behavior.
+///
+/// Priority order (highest to lowest):
+/// 1. .ckignore patterns (if use_ckignore is true)
+/// 2. Additional excludes (from command-line or API calls)
+/// 3. Default patterns (if use_defaults is true)
+///
+/// # Arguments
+/// * `repo_root` - Optional repository root for loading .ckignore file
+/// * `additional_excludes` - Additional exclusion patterns (e.g., from CLI flags)
+/// * `use_ckignore` - Whether to load and include .ckignore patterns
+/// * `use_defaults` - Whether to include default exclusion patterns
+///
+/// # Returns
+/// Combined list of exclusion patterns in priority order
+pub fn build_exclude_patterns(
+    repo_root: Option<&Path>,
+    additional_excludes: &[String],
+    use_ckignore: bool,
+    use_defaults: bool,
+) -> Vec<String> {
+    let mut patterns = Vec::new();
+
+    // 1. Load .ckignore patterns (highest priority among additional patterns)
+    if use_ckignore
+        && let Some(root) = repo_root
+        && let Ok(ckignore_patterns) = read_ckignore_patterns(root)
+        && !ckignore_patterns.is_empty()
+    {
+        patterns.extend(ckignore_patterns);
+    }
+
+    // 2. Add additional exclude patterns (e.g., from command-line)
+    patterns.extend(additional_excludes.iter().cloned());
+
+    // 3. Add defaults (lowest priority)
+    if use_defaults {
+        patterns.extend(get_default_exclude_patterns());
+    }
+
+    patterns
+}
+
 pub fn get_sidecar_path(repo_root: &Path, file_path: &Path) -> PathBuf {
     let relative = file_path.strip_prefix(repo_root).unwrap_or(file_path);
     let mut sidecar = repo_root.join(".ck");
@@ -541,6 +597,36 @@ pub fn compute_file_hash(path: &Path) -> Result<String> {
 
     let hash = hasher.finalize();
     Ok(hash.to_hex().to_string())
+}
+
+/// Compute blake3 hash of chunk content for incremental indexing
+/// This enables us to detect which chunks have changed and only re-embed those
+///
+/// Hashes all fields that affect the chunk's display and meaning:
+/// - text: the main chunk content
+/// - leading_trivia: doc comments and comments before the chunk
+/// - trailing_trivia: comments after the chunk
+pub fn compute_chunk_hash(
+    text: &str,
+    leading_trivia: &[String],
+    trailing_trivia: &[String],
+) -> String {
+    let mut hasher = blake3::Hasher::new();
+
+    // Hash the main text
+    hasher.update(text.as_bytes());
+
+    // Hash leading trivia (doc comments, preceding comments)
+    for trivia in leading_trivia {
+        hasher.update(trivia.as_bytes());
+    }
+
+    // Hash trailing trivia (following comments)
+    for trivia in trailing_trivia {
+        hasher.update(trivia.as_bytes());
+    }
+
+    hasher.finalize().to_hex().to_string()
 }
 
 /// PDF-specific utilities

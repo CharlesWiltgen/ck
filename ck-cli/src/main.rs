@@ -1,5 +1,8 @@
 use anyhow::Result;
-use ck_core::{SearchMode, SearchOptions};
+use ck_core::{
+    IncludePattern, SearchMode, SearchOptions, get_default_ckignore_content,
+    heatmap::{self, HeatmapBucket},
+};
 use clap::Parser;
 use console::style;
 use owo_colors::{OwoColorize, Rgb};
@@ -8,8 +11,11 @@ use std::path::{Path, PathBuf};
 
 mod mcp;
 mod mcp_server;
+mod path_utils;
 mod progress;
+// TUI is now in its own crate: ck-tui
 
+use path_utils::{build_include_patterns, expand_glob_patterns};
 use progress::StatusReporter;
 
 #[derive(Parser)]
@@ -242,6 +248,12 @@ struct Cli {
     no_ckignore: bool,
 
     #[arg(
+        long = "print-default-ckignore",
+        help = "Print the default .ckignore content that ck generates and exit"
+    )]
+    print_default_ckignore: bool,
+
+    #[arg(
         long = "full-section",
         help = "Return complete code sections (functions/classes) instead of just matching lines. Uses tree-sitter to identify semantic boundaries. Supported: Python, JavaScript, TypeScript, Haskell, Rust, Ruby"
     )]
@@ -306,6 +318,12 @@ struct Cli {
     )]
     inspect: bool,
 
+    #[arg(
+        long = "dump-chunks",
+        help = "Visualize chunk boundaries for a file using the same rendering as TUI chunk mode"
+    )]
+    dump_chunks: bool,
+
     // Model selection (index-time only)
     #[arg(
         long = "model",
@@ -339,102 +357,102 @@ struct Cli {
             "semantic", "lexical", "hybrid", "regex", "top_k", "threshold", "show_scores",
             "json", "json_v1", "jsonl", "no_snippet", "reindex", "exclude", "no_default_excludes",
             "no_ignore", "full_section", "index", "clean", "clean_orphans", "switch_model",
-            "force", "add", "status", "status_verbose", "inspect", "model", "rerank", "rerank_model"
+            "force", "add", "status", "status_verbose", "inspect", "dump_chunks", "model", "rerank", "rerank_model", "tui"
         ]
     )]
     serve: bool,
+
+    // TUI mode
+    #[arg(
+        long = "tui",
+        help = "Interactive TUI mode - like fzf but semantic. Live search with arrow keys, Tab to switch modes, Enter to open in $EDITOR",
+        conflicts_with_all = [
+            "line_numbers", "no_filenames", "with_filenames",
+            "files_with_matches", "files_without_matches", "ignore_case", "word_regexp",
+            "fixed_strings", "recursive", "context", "after_context", "before_context",
+            "semantic", "lexical", "hybrid", "regex", "top_k", "threshold", "show_scores",
+            "json", "json_v1", "jsonl", "no_snippet", "reindex", "exclude", "no_default_excludes",
+            "no_ignore", "full_section", "index", "clean", "clean_orphans", "switch_model",
+            "force", "add", "status", "status_verbose", "inspect", "dump_chunks", "model", "rerank", "rerank_model", "serve"
+        ]
+    )]
+    tui: bool,
 }
 
-fn expand_glob_patterns(paths: &[PathBuf], exclude_patterns: &[String]) -> Result<Vec<PathBuf>> {
-    let mut expanded = Vec::new();
+fn canonicalize_for_comparison(path: &Path) -> PathBuf {
+    if let Ok(canonical) = path.canonicalize() {
+        return canonical;
+    }
 
-    for path in paths {
-        let path_str = path.to_string_lossy();
+    std::env::current_dir()
+        .map(|cwd| cwd.join(path))
+        .unwrap_or_else(|_| path.to_path_buf())
+}
 
-        // Check if this looks like a glob pattern
-        if path_str.contains('*') || path_str.contains('?') || path_str.contains('[') {
-            // Use glob to expand the pattern
-            match glob::glob(&path_str) {
-                Ok(glob_paths) => {
-                    let mut found_matches = false;
-                    for glob_result in glob_paths {
-                        match glob_result {
-                            Ok(matched_path) => {
-                                // Apply exclusion patterns to glob results
-                                if !should_exclude_path(&matched_path, exclude_patterns) {
-                                    expanded.push(matched_path);
-                                }
-                                found_matches = true;
-                            }
-                            Err(e) => {
-                                eprintln!("Warning: glob error for pattern '{}': {}", path_str, e);
-                            }
-                        }
-                    }
+fn find_search_root(include_patterns: &[IncludePattern]) -> PathBuf {
+    if include_patterns.is_empty() {
+        return PathBuf::from(".");
+    }
 
-                    // If no matches found, treat as literal path (grep behavior)
-                    if !found_matches {
-                        expanded.push(path.clone());
-                    }
-                }
-                Err(e) => {
-                    eprintln!("Warning: invalid glob pattern '{}': {}", path_str, e);
-                    // Treat as literal path if glob pattern is invalid
-                    expanded.push(path.clone());
-                }
-            }
+    let mut root = if include_patterns[0].is_dir {
+        include_patterns[0].path.clone()
+    } else {
+        include_patterns[0]
+            .path
+            .parent()
+            .unwrap_or(&include_patterns[0].path)
+            .to_path_buf()
+    };
+
+    for pattern in include_patterns.iter().skip(1) {
+        let mut candidate = if pattern.is_dir {
+            pattern.path.clone()
         } else {
-            // Not a glob pattern, use as-is
-            expanded.push(path.clone());
+            pattern.path.parent().unwrap_or(&pattern.path).to_path_buf()
+        };
+
+        if candidate.starts_with(&root) {
+            continue;
         }
-    }
 
-    Ok(expanded)
-}
-
-fn should_exclude_path(path: &Path, exclude_patterns: &[String]) -> bool {
-    // Check if any component in the path matches an exclusion pattern
-    for component in path.components() {
-        if let std::path::Component::Normal(name) = component {
-            let name_str = name.to_string_lossy();
-            for pattern in exclude_patterns {
-                if name_str == pattern.as_str() {
-                    return true;
-                }
+        while !root.starts_with(&candidate) && !candidate.starts_with(&root) {
+            if let Some(parent) = root.parent() {
+                root = parent.to_path_buf();
+            } else {
+                break;
             }
         }
+
+        if !candidate.starts_with(&root) {
+            while let Some(parent) = candidate.parent() {
+                if parent.starts_with(&root) {
+                    candidate = parent.to_path_buf();
+                    break;
+                }
+                candidate = parent.to_path_buf();
+            }
+        }
+
+        if root.starts_with(&candidate) {
+            root = candidate;
+        }
     }
-    false
+
+    if root.as_os_str().is_empty() {
+        PathBuf::from(".")
+    } else {
+        root
+    }
 }
 
 fn build_exclude_patterns(cli: &Cli, repo_root: Option<&Path>) -> Vec<String> {
-    let mut patterns = Vec::new();
-
-    // Build exclusion patterns that will be merged with .gitignore (if respected)
-    // Note: These patterns are ADDITIVE with .gitignore, not replacements
-    // Final exclusions = .gitignore + .ckignore + command-line + defaults
-    //
-    // Priority order within these additional patterns:
-    // .ckignore > command-line excludes > defaults
-
-    // 1. Load .ckignore patterns (highest priority among additional patterns)
-    if !cli.no_ckignore
-        && let Some(root) = repo_root
-        && let Ok(ckignore_patterns) = ck_core::read_ckignore_patterns(root)
-        && !ckignore_patterns.is_empty()
-    {
-        patterns.extend(ckignore_patterns);
-    }
-
-    // 2. Add command-line exclude patterns
-    patterns.extend(cli.exclude.clone());
-
-    // 3. Add defaults (lowest priority)
-    if !cli.no_default_excludes {
-        patterns.extend(ck_core::get_default_exclude_patterns());
-    }
-
-    patterns
+    // Use the centralized pattern builder from ck-core
+    ck_core::build_exclude_patterns(
+        repo_root,
+        &cli.exclude,
+        !cli.no_ckignore,
+        !cli.no_default_excludes,
+    )
 }
 
 fn resolve_model_selection(
@@ -707,6 +725,55 @@ async fn run_index_workflow(
     Ok(())
 }
 
+async fn dump_file_chunks(file_path: &PathBuf) -> Result<()> {
+    use std::path::Path;
+
+    let path = Path::new(file_path);
+
+    // Use the shared live chunking function
+    let (lines, chunk_metas) = ck_tui::chunk_file_live(path).map_err(|err| {
+        eprintln!("Error: {}", err);
+        std::process::exit(1);
+    })?;
+
+    // Display chunks for entire file
+    let display_lines = ck_tui::chunks::collect_chunk_display_lines(
+        &lines,
+        0,            // context_start
+        lines.len(),  // context_end
+        1,            // match_line (not relevant for dump)
+        None,         // chunk_meta (None = show all chunks)
+        &chunk_metas, // all_chunks
+        true,         // full_file_mode
+    );
+
+    // Print header
+    println!("File: {}", file_path.display());
+    if let Some(lang) = ck_core::Language::from_path(path) {
+        println!("Language: {}", lang);
+    }
+    println!("Chunks: {}", chunk_metas.len());
+
+    // Debug: Show chunk type breakdown
+    let text_chunk_count = chunk_metas
+        .iter()
+        .filter(|c| c.chunk_type.as_deref() == Some("text"))
+        .count();
+    println!("  - Text chunks: {}", text_chunk_count);
+    println!(
+        "  - Structural chunks: {}",
+        chunk_metas.len() - text_chunk_count
+    );
+    println!();
+
+    // Convert display lines to strings and print
+    for line in display_lines {
+        println!("{}", ck_tui::chunk_display_line_to_string(&line));
+    }
+
+    Ok(())
+}
+
 async fn inspect_file_metadata(file_path: &PathBuf, status: &StatusReporter) -> Result<()> {
     use ck_embed::TokenEstimator;
     use console::style;
@@ -778,6 +845,18 @@ async fn inspect_file_metadata(file_path: &PathBuf, status: &StatusReporter) -> 
             ck_chunk::ChunkType::Text => "text",
         };
 
+        let stride_display = chunk
+            .stride_info
+            .as_ref()
+            .map(|stride| {
+                format!(
+                    " [stride {}/{}]",
+                    stride.stride_index + 1,
+                    stride.total_strides
+                )
+            })
+            .unwrap_or_default();
+
         // Simple preview - first 80 chars
         let preview = chunk
             .text
@@ -791,9 +870,10 @@ async fn inspect_file_metadata(file_path: &PathBuf, status: &StatusReporter) -> 
             .to_string();
 
         println!(
-            "  {} {}: {} tokens | L{}-{} | {}{}",
+            "  {} {}{}: {} tokens | L{}-{} | {}{}",
             style(format!("{:2}.", i + 1)).dim(),
             style(type_display).blue(),
+            stride_display,
             style(chunk_tokens).yellow(),
             chunk.span.line_start,
             chunk.span.line_end,
@@ -843,9 +923,25 @@ async fn main() {
 async fn run_main() -> Result<()> {
     let cli = Cli::parse();
 
+    if cli.print_default_ckignore {
+        print!("{}", get_default_ckignore_content());
+        return Ok(());
+    }
+
     // Handle MCP server mode first
     if cli.serve {
         return run_mcp_server().await;
+    }
+
+    // Handle TUI mode
+    if cli.tui {
+        let search_path = cli
+            .files
+            .first()
+            .cloned()
+            .unwrap_or_else(|| PathBuf::from("."));
+        let initial_query = cli.pattern.clone();
+        return ck_tui::run_tui(search_path, initial_query).await;
     }
 
     // Regular CLI mode
@@ -1158,6 +1254,21 @@ async fn run_cli_mode(cli: Cli) -> Result<()> {
         return Ok(());
     }
 
+    if cli.dump_chunks {
+        // Handle --dump-chunks flag
+        let file_path = if let Some(pattern) = &cli.pattern {
+            PathBuf::from(pattern)
+        } else if !cli.files.is_empty() {
+            cli.files[0].clone()
+        } else {
+            eprintln!("Error: --dump-chunks requires a file path");
+            std::process::exit(1);
+        };
+
+        dump_file_chunks(&file_path).await?;
+        return Ok(());
+    }
+
     // Validate conflicting flags
     if cli.files_with_matches && cli.files_without_matches {
         eprintln!("Error: Cannot use -l and -L together");
@@ -1186,45 +1297,86 @@ async fn run_cli_mode(cli: Cli) -> Result<()> {
         // Build options to get exclusion patterns
         let temp_options = build_options(&cli, reindex, repo_root);
 
-        let files = if cli.files.is_empty() {
+        let expanded_targets = if cli.files.is_empty() {
             vec![PathBuf::from(".")]
         } else {
             expand_glob_patterns(&cli.files, &temp_options.exclude_patterns)?
         };
 
+        let include_patterns = if cli.files.is_empty() {
+            Vec::new()
+        } else {
+            build_include_patterns(&expanded_targets)
+        };
+
+        let mut search_root = if include_patterns.is_empty() {
+            PathBuf::from(".")
+        } else {
+            find_search_root(&include_patterns)
+        };
+
+        if expanded_targets.len() == 1 && !expanded_targets[0].exists() {
+            search_root = expanded_targets[0].clone();
+        }
+
+        let include_patterns = if include_patterns.len() > 1 {
+            include_patterns
+                .into_iter()
+                .filter(|pattern| !(pattern.is_dir && pattern.path == search_root))
+                .collect()
+        } else {
+            include_patterns
+        };
+
         // Handle multiple files like grep; allow -h/-H overrides
-        let mut show_filenames = files.len() > 1 || files.iter().any(|p| p.is_dir());
+        let mut show_filenames = if include_patterns.is_empty() {
+            expanded_targets.len() > 1 || expanded_targets.iter().any(|p| p.is_dir())
+        } else {
+            include_patterns.len() > 1 || include_patterns.iter().any(|p| p.is_dir)
+        };
         if cli.no_filenames {
             show_filenames = false;
         }
         if cli.with_filenames {
             show_filenames = true;
         }
-        let mut any_matches = false;
-        let mut closest_overall: Option<ck_core::SearchResult> = None;
+        let mut options = build_options(&cli, reindex, repo_root);
+        options.show_filenames = show_filenames;
+        options.include_patterns = include_patterns.clone();
+        options.path = search_root.clone();
 
-        for file_path in files {
-            let mut options = build_options(&cli, reindex, repo_root);
-            options.show_filenames = show_filenames;
-            let summary = run_search(pattern.clone(), file_path, options, &status).await?;
-            if summary.had_matches {
-                any_matches = true;
-            }
-            // Track the highest-scoring closest match across all searches
-            if let Some(closest) = summary.closest_below_threshold
-                && (closest_overall.is_none()
-                    || closest.score > closest_overall.as_ref().unwrap().score)
-            {
-                closest_overall = Some(closest);
+        let summary = run_search(pattern.clone(), search_root, options, &status).await?;
+
+        if cli.files_without_matches {
+            let matched_canon: Vec<PathBuf> = summary
+                .matched_paths
+                .iter()
+                .map(|p| canonicalize_for_comparison(p))
+                .collect();
+
+            for target in &expanded_targets {
+                let canonical_target = canonicalize_for_comparison(target);
+                let target_is_dir = target.is_dir();
+                let has_match = matched_canon.iter().any(|matched| {
+                    if target_is_dir {
+                        matched.starts_with(&canonical_target)
+                    } else {
+                        matched == &canonical_target
+                    }
+                });
+
+                if !has_match {
+                    println!("{}", target.display());
+                }
             }
         }
 
         // grep-like exit codes: 0 if matches found, 1 if none
-        if !any_matches {
+        if !summary.had_matches {
             eprintln!("No matches found");
 
             // Show the closest match below threshold if available
-            if let Some(closest) = closest_overall {
+            if let Some(closest) = summary.closest_below_threshold {
                 // Format like a regular result but in red
                 let score_text = format!("[{:.3}] ", closest.score);
                 let file_text = format!("{}:", closest.file.display());
@@ -1306,6 +1458,7 @@ fn build_options(cli: &Cli, reindex: bool, repo_root: Option<&Path>) -> SearchOp
         files_with_matches: cli.files_with_matches,
         files_without_matches: cli.files_without_matches,
         exclude_patterns,
+        include_patterns: Vec::new(),
         respect_gitignore: !cli.no_ignore,
         full_section: cli.full_section,
         // Enhanced embedding options (search-time only)
@@ -1364,14 +1517,12 @@ fn highlight_regex_matches(text: &str, pattern: &str, options: &SearchOptions) -
 }
 
 fn highlight_semantic_chunks(text: &str, pattern: &str, _options: &SearchOptions) -> String {
-    // Split text into tokens for more granular heatmap highlighting
-    let tokens = split_into_tokens(text);
+    let tokens = heatmap::split_into_tokens(text);
 
-    // Calculate similarity scores for each token/phrase
     let highlighted_tokens: Vec<String> = tokens
         .into_iter()
         .map(|token| {
-            let similarity_score = calculate_token_similarity(&token, pattern);
+            let similarity_score = heatmap::calculate_token_similarity(&token, pattern);
             apply_heatmap_color(&token, similarity_score)
         })
         .collect();
@@ -1379,130 +1530,30 @@ fn highlight_semantic_chunks(text: &str, pattern: &str, _options: &SearchOptions
     highlighted_tokens.join("")
 }
 
-fn split_into_tokens(text: &str) -> Vec<String> {
-    // Split text into meaningful tokens for heatmap highlighting
-    // This preserves spaces and punctuation as separate tokens
-    let mut tokens = Vec::new();
-    let mut current_token = String::new();
-
-    for ch in text.chars() {
-        match ch {
-            ' ' | '\t' | '\n' => {
-                if !current_token.is_empty() {
-                    tokens.push(current_token.clone());
-                    current_token.clear();
-                }
-                tokens.push(ch.to_string());
-            }
-            '(' | ')' | '[' | ']' | '{' | '}' | ',' | ';' | ':' | '.' | '!' | '?' => {
-                if !current_token.is_empty() {
-                    tokens.push(current_token.clone());
-                    current_token.clear();
-                }
-                tokens.push(ch.to_string());
-            }
-            _ => {
-                current_token.push(ch);
-            }
-        }
-    }
-
-    if !current_token.is_empty() {
-        tokens.push(current_token);
-    }
-
-    tokens
-}
-
-fn calculate_token_similarity(token: &str, pattern: &str) -> f32 {
-    // Skip whitespace and punctuation
-    if token.trim().is_empty() || token.chars().all(|c| !c.is_alphanumeric()) {
-        return 0.0;
-    }
-
-    let token_lower = token.to_lowercase();
-    let pattern_lower = pattern.to_lowercase();
-
-    // Exact match gets highest score
-    if token_lower == pattern_lower {
-        return 1.0;
-    }
-
-    // Check if token contains any pattern words or vice versa
-    let pattern_words: Vec<&str> = pattern_lower.split_whitespace().collect();
-    let mut max_score: f32 = 0.0;
-
-    for pattern_word in &pattern_words {
-        if pattern_word.len() < 3 {
-            continue; // Skip short words
-        }
-
-        // Exact word match
-        if token_lower == *pattern_word {
-            max_score = max_score.max(0.9);
-        }
-        // Substring match
-        else if token_lower.contains(pattern_word) {
-            let ratio = pattern_word.len() as f32 / token_lower.len() as f32;
-            max_score = max_score.max(0.6 * ratio);
-        }
-        // Pattern word contains token
-        else if pattern_word.contains(&token_lower) && token_lower.len() >= 3 {
-            let ratio = token_lower.len() as f32 / pattern_word.len() as f32;
-            max_score = max_score.max(0.5 * ratio);
-        }
-        // Fuzzy similarity for related terms
-        else {
-            let similarity = calculate_fuzzy_similarity(&token_lower, pattern_word);
-            max_score = max_score.max(similarity * 0.4);
-        }
-    }
-
-    max_score
-}
-
-fn calculate_fuzzy_similarity(s1: &str, s2: &str) -> f32 {
-    // Simple edit distance-based similarity
-    if s1.is_empty() || s2.is_empty() || s1.len() < 3 || s2.len() < 3 {
-        return 0.0;
-    }
-
-    let len1 = s1.len();
-    let len2 = s2.len();
-    let max_len = len1.max(len2);
-
-    // Count common characters
-    let s1_chars: std::collections::HashSet<char> = s1.chars().collect();
-    let s2_chars: std::collections::HashSet<char> = s2.chars().collect();
-    let common_chars = s1_chars.intersection(&s2_chars).count();
-
-    // Similarity based on common characters
-    common_chars as f32 / max_len as f32
-}
-
 fn apply_heatmap_color(token: &str, score: f32) -> String {
-    // Skip coloring whitespace and punctuation
     if token.trim().is_empty() || token.chars().all(|c| !c.is_alphanumeric()) {
         return token.to_string();
     }
 
-    // 8-step linear gradient: grey to green with bright final step
-    match score {
-        s if s >= 0.875 => token.color(Rgb(0, 255, 100)).bold().to_string(), // Step 8: Extra bright green (bold)
-        s if s >= 0.75 => token.color(Rgb(0, 180, 80)).to_string(),          // Step 7: Bright green
-        s if s >= 0.625 => token.color(Rgb(0, 160, 70)).to_string(), // Step 6: Medium-bright green
-        s if s >= 0.5 => token.color(Rgb(0, 140, 60)).to_string(),   // Step 5: Medium green
-        s if s >= 0.375 => token.color(Rgb(50, 120, 80)).to_string(), // Step 4: Green-grey
-        s if s >= 0.25 => token.color(Rgb(100, 130, 100)).to_string(), // Step 3: Light green-grey
-        s if s >= 0.125 => token.color(Rgb(140, 140, 140)).to_string(), // Step 2: Medium grey
-        s if s > 0.0 => token.color(Rgb(180, 180, 180)).to_string(), // Step 1: Light grey
-        _ => token.to_string(),                                      // No relevance: no color
+    let bucket = HeatmapBucket::from_score(score);
+
+    match bucket.rgb() {
+        Some((r, g, b)) => {
+            let coloured = token.color(Rgb(r, g, b));
+            if bucket.is_bold() {
+                coloured.bold().to_string()
+            } else {
+                coloured.to_string()
+            }
+        }
+        None => token.to_string(),
     }
 }
 
 struct SearchSummary {
     had_matches: bool,
     closest_below_threshold: Option<ck_core::SearchResult>,
+    matched_paths: Vec<PathBuf>,
 }
 
 async fn run_search(
@@ -1569,20 +1620,16 @@ async fn run_search(
         );
     }
 
-    // We'll create the search spinner after indexing is complete to avoid conflicts
-    let search_spinner: Option<indicatif::ProgressBar> = None;
+    // Create search spinner for showing live search progress
+    let search_spinner = status.create_spinner("Searching...");
 
     // Create progress callback for search operations
-    let search_progress_callback = if !status.quiet && search_spinner.is_some() {
-        let spinner_clone = search_spinner.clone();
-        Some(Box::new(move |msg: &str| {
-            if let Some(ref pb) = spinner_clone {
-                pb.set_message(msg.to_string());
-            }
-        }) as ck_engine::SearchProgressCallback)
-    } else {
-        None
-    };
+    let search_progress_callback = search_spinner.as_ref().map(|spinner| {
+        let spinner_clone = spinner.clone();
+        Box::new(move |msg: &str| {
+            spinner_clone.set_message(msg.to_string());
+        }) as ck_engine::SearchProgressCallback
+    });
 
     // Create indexing progress callbacks for automatic indexing during semantic search
     let (indexing_progress_callback, detailed_indexing_progress_callback) = if !status.quiet
@@ -1672,10 +1719,9 @@ async fn run_search(
     )
     .await?;
     let results = &search_results.matches;
+    let matched_paths: Vec<PathBuf> = results.iter().map(|result| result.file.clone()).collect();
 
-    if let Some(spinner) = search_spinner {
-        status.finish_progress(Some(spinner), &format!("Found {} results", results.len()));
-    }
+    status.finish_progress(search_spinner, &format!("Found {} results", results.len()));
 
     let mut has_matches = false;
     if options.jsonl_output {
@@ -1727,49 +1773,100 @@ async fn run_search(
                 String::new()
             };
 
-            let file_text = if options.show_filenames {
-                format!("{}:", style(result.file.display()).cyan().bold())
-            } else {
-                String::new()
-            };
-
             let highlighted_preview = highlight_matches(&result.preview, &options.query, &options);
 
+            // Format output based on options
             if options.line_numbers && options.show_filenames {
+                // grep format: filename:line_number:content (all on one line)
                 println!(
-                    "{}{}{}:{}",
+                    "{}{}:{}:{}",
                     score_text,
-                    file_text,
+                    style(result.file.display()).cyan().bold(),
                     style(result.span.line_start).yellow(),
                     highlighted_preview
                 );
             } else if options.line_numbers {
+                // Just line number when no filename
                 println!(
                     "{}{}:{}",
                     score_text,
                     style(result.span.line_start).yellow(),
                     highlighted_preview
                 );
+            } else if options.show_filenames {
+                // Filename on separate line when no line numbers (more readable for semantic search)
+                println!(
+                    "{}{}:\n{}",
+                    score_text,
+                    style(result.file.display()).cyan().bold(),
+                    highlighted_preview
+                );
             } else {
-                println!("{}{}{}", score_text, file_text, highlighted_preview);
+                // No filename or line number
+                println!("{}{}", score_text, highlighted_preview);
             }
         }
-    }
-
-    // For -L flag: if this file had no matches, print the filename
-    if options.files_without_matches && !has_matches {
-        println!("{}", options.path.display());
     }
 
     Ok(SearchSummary {
         had_matches: has_matches,
         closest_below_threshold: search_results.closest_below_threshold,
+        matched_paths,
     })
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::fs;
+    use std::path::{Path, PathBuf};
+
+    use crate::path_utils::{self, expand_glob_patterns_with_base};
+    use tempfile::tempdir;
+
+    #[test]
+    fn test_expand_glob_patterns_supports_semicolon_lists() {
+        let temp_dir = tempdir().unwrap();
+        let base = temp_dir.path();
+
+        let rust_file = base.join("example.rs");
+        let html_file = base.join("page.html");
+        let docs_dir = base.join("docs");
+        let nested_dir = docs_dir.join("nested");
+        let nested_rust_file = nested_dir.join("lib.rs");
+
+        fs::write(&rust_file, "fn main() {}\n").unwrap();
+        fs::write(&html_file, "<html></html>").unwrap();
+        fs::create_dir_all(&nested_dir).unwrap();
+        fs::write(&nested_rust_file, "pub fn lib() {}\n").unwrap();
+
+        let expanded =
+            expand_glob_patterns_with_base(base, &[PathBuf::from("*.rs;*.html;docs/")], &[])
+                .expect("pattern expansion");
+
+        let has_example = expanded.iter().any(|p| p.ends_with("example.rs"));
+        let has_page = expanded.iter().any(|p| p.ends_with("page.html"));
+        let has_docs = expanded.iter().any(|p| p.ends_with("docs"));
+        let has_nested = expanded.iter().any(|p| p.ends_with("docs/nested/lib.rs"));
+
+        assert!(has_example);
+        assert!(has_page);
+        assert!(has_docs);
+        assert!(has_nested);
+    }
+
+    #[test]
+    fn test_split_path_patterns_trims_whitespace_and_empties() {
+        let patterns = path_utils::split_path_patterns(Path::new(" foo.rs ; ; *.html ;docs/ "));
+        assert_eq!(
+            patterns,
+            vec![
+                "foo.rs".to_string(),
+                "*.html".to_string(),
+                "docs/".to_string()
+            ]
+        );
+    }
 
     #[test]
     fn test_highlight_regex_matches_with_valid_pattern() {
