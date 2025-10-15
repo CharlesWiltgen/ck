@@ -341,6 +341,4 @@ ck --switch-model jina-code .              # Change embedding model
 
 ## Additional Resources
 
-- Full documentation: [AI Agent Setup Guide](guide/ai-agent-setup.md)
-- MCP integration: [MCP Integration](features/mcp-integration.md)
-- CLI reference: [CLI Reference](reference/cli.md)
+For complete documentation, visit: https://beaconbay.github.io/ck/
