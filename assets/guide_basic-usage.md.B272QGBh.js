@@ -146,7 +146,7 @@ import{_ as i,c as a,o as n,ag as t}from"./chunks/framework.BmMagzGG.js";const o
 <span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">cat</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> .ckignore</span></span>
 <span class="line"></span>
 <span class="line"><span style="--shiki-light:#6A737D;--shiki-dark:#6A737D;"># Edit exclusions</span></span>
-<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">vim</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> .ckignore</span></span></code></pre></div><p>Example <code>.ckignore</code>:</p><div class="language-gitignore vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">gitignore</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span># Images and media</span></span>
+<span class="line"><span style="--shiki-light:#6F42C1;--shiki-dark:#B392F0;">vim</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;"> .ckignore</span></span></code></pre></div><p>Example <code>.ckignore</code>:</p><div class="language-txt vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">txt</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span># Images and media</span></span>
 <span class="line"><span>*.png</span></span>
 <span class="line"><span>*.jpg</span></span>
 <span class="line"><span>*.mp4</span></span>
