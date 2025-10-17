@@ -1,6 +1,11 @@
+---
+title: Configuration
+description: Configure ck's indexing behavior with .ckignore files, exclusion patterns, and project-specific settings for optimal semantic search.
+---
+
 # Configuration
 
-Configure ck’s indexing and exclusion behavior.
+Configure ck's indexing and exclusion behavior.
 
 ## .ckignore File
 

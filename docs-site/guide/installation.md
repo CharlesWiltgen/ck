@@ -1,3 +1,8 @@
+---
+title: Installation
+description: Install ck semantic code search from crates.io, NPM, or source. Get started with your first search in minutes with automatic indexing and model downloads.
+---
+
 # Installation
 
 Get up and running with ck in minutes.

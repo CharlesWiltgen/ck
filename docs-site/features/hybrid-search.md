@@ -1,3 +1,8 @@
+---
+title: Hybrid Search
+description: Combine semantic understanding with keyword precision using Reciprocal Rank Fusion (RRF). Best of both worlds for accurate code search results.
+---
+
 # Hybrid Search
 
 Combine semantic understanding with keyword precision using Reciprocal Rank Fusion.

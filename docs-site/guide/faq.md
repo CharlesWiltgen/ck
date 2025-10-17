@@ -1,3 +1,8 @@
+---
+title: FAQ
+description: Frequently asked questions about ck semantic code search. Covers indexing, models, performance, troubleshooting, and common usage questions.
+---
+
 # FAQ
 
 Frequently asked questions about ck.

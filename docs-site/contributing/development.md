@@ -1,3 +1,8 @@
+---
+title: Development Guide
+description: Contribute to ck development. Setup guide, coding standards, pull request process, and development workflow for contributors.
+---
+
 # Development Guide
 
 Contributing to ck development.

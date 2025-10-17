@@ -1,3 +1,8 @@
+---
+title: AI Agent Setup
+description: Configure ck for AI coding assistants like Claude Code and Cursor. Best practices for semantic search, JSONL output, and MCP integration with AI agents.
+---
+
 # Configuring ck for AI Coding Agents
 
 Best practices for integrating ck with AI coding assistants like Claude Code, Cursor, and other agent-based development tools.

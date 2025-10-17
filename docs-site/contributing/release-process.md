@@ -1,3 +1,8 @@
+---
+title: Release Process
+description: Create and publish ck releases. Version tagging, quality checks, changelog updates, and publishing workflow for maintainers.
+---
+
 # Release Process
 
 How to create and publish new ck releases.

@@ -1,3 +1,8 @@
+---
+title: Basic Usage
+description: Common patterns and workflows for everyday code search with ck. Learn semantic, keyword, and hybrid search with practical examples for developers.
+---
+
 # Basic Usage
 
 Common patterns and workflows for everyday code search.

@@ -1,3 +1,8 @@
+---
+title: Choosing an Interface
+description: Compare ck's four interfaces—CLI, TUI, Editor, and MCP—to find the best fit for your workflow. Detailed comparison of features, use cases, and strengths.
+---
+
 # Choosing an Interface
 
 ck offers four different interfaces for code search. Choose the one that best fits your workflow and use case.

@@ -1,3 +1,8 @@
+---
+title: Changelog
+description: Complete version history for ck with all notable changes, features, fixes, and technical improvements. Follows semantic versioning.
+---
+
 # Changelog
 
 All notable changes to ck are documented here following [Semantic Versioning](https://semver.org/).

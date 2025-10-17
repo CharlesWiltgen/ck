@@ -1,3 +1,8 @@
+---
+title: Advanced Usage
+description: Power-user features for ck including model selection, complete code sections, custom exclusions, JSON/JSONL output, and CI/CD integration patterns.
+---
+
 # Advanced Usage
 
 Power-user features and advanced workflows for ck.

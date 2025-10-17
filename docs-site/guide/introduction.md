@@ -1,6 +1,11 @@
+---
+title: Introduction to ck
+description: Semantic code search tool that finds code by meaning, not keywords. Drop-in grep replacement with AI-powered understanding for developers and AI agents.
+---
+
 # Introduction
 
-**ck (seek)** finds code by meaning, not just keywords. It’s grep that understands what you’re looking for — search for “error handling” and find try/catch blocks, error returns, and exception handling code even when those exact words aren’t present.
+**ck (seek)** finds code by meaning, not just keywords. It's grep that understands what you're looking for — search for "error handling" and find try/catch blocks, error returns, and exception handling code even when those exact words aren't present.
 
 ## What is ck?
 

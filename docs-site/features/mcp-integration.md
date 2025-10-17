@@ -1,3 +1,8 @@
+---
+title: MCP Integration
+description: Built-in MCP (Model Context Protocol) server for AI coding assistants. Integrate ck with Claude Desktop, Cursor, and other MCP-compatible AI tools.
+---
+
 # MCP Integration
 
 ck includes a built-in MCP (Model Context Protocol) server for seamless integration with AI coding assistants like Claude Desktop and Cursor.

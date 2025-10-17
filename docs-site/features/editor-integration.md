@@ -1,6 +1,11 @@
+---
+title: Editor Integration
+description: Native VSCode and Cursor extensions for ck semantic search. Search code without leaving your editor with inline results and live updates.
+---
+
 # Editor Integration
 
-Bring ck’s semantic code search directly into your code editor with native extensions.
+Bring ck's semantic code search directly into your code editor with native extensions.
 
 ## Overview
 

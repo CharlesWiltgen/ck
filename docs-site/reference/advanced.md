@@ -1,3 +1,8 @@
+---
+title: Advanced Configuration
+description: Advanced ck configuration including environment variables, index optimization, shell integration, and power-user techniques for semantic search.
+---
+
 # Advanced Configuration
 
 Advanced configuration options, environment variables, and power-user techniques for ck.

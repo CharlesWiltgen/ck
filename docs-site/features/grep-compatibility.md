@@ -1,3 +1,8 @@
+---
+title: grep Compatibility
+description: ck is a drop-in replacement for grep and ripgrep. All standard flags work, with automatic smart filtering and optional semantic enhancement.
+---
+
 # grep Compatibility
 
 ck is a drop-in replacement for grep/ripgrep. All your muscle memory works.

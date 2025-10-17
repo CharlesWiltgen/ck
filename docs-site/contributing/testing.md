@@ -1,3 +1,8 @@
+---
+title: Testing Guidelines
+description: Comprehensive testing practices for ck. Unit tests, integration tests, test organization, and quality standards for contributors.
+---
+
 # Testing Guidelines
 
 Comprehensive testing practices for ck.

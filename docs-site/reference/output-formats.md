@@ -1,3 +1,8 @@
+---
+title: Output Formats
+description: JSON and JSONL output format reference for ck. Complete schemas, field descriptions, processing examples for AI agents and automation.
+---
+
 # Output Formats
 
 Complete reference for ck's structured output formats.

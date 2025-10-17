@@ -1,6 +1,11 @@
+---
+title: Known Limitations
+description: Current limitations and constraints of ck including large file handling, configuration options, and features not yet implemented. Workarounds provided.
+---
+
 # Known Limitations
 
-Current limitations and constraints of `ck`. These are areas where `ck` has known constraints or where requested features haven’t been implemented yet.
+Current limitations and constraints of `ck`. These are areas where `ck` has known constraints or where requested features haven't been implemented yet.
 
 ## Indexing Limitations
 

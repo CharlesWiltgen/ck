@@ -1,6 +1,11 @@
+---
+title: Architecture
+description: Technical architecture of ck's modular Rust workspace. Understand crate organization, indexing pipeline, search algorithms, and design decisions.
+---
+
 # Architecture
 
-Understanding ck’s modular Rust workspace architecture.
+Understanding ck's modular Rust workspace architecture.
 
 ## Workspace Structure
 

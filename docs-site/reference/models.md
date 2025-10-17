@@ -1,3 +1,8 @@
+---
+title: Embedding Models
+description: Compare BGE-Small, Nomic V1.5, and Jina Code embedding models for ck. Understand chunk sizes, context windows, and performance trade-offs.
+---
+
 # Embedding Models
 
 Choose the right embedding model for your semantic search needs.

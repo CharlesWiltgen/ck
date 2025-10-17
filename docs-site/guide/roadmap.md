@@ -1,6 +1,11 @@
+---
+title: Roadmap
+description: Development roadmap for ck semantic code search. View completed features, in-progress work, and planned improvements for future releases.
+---
+
 # Roadmap
 
-ck’s development roadmap, completed features, and planned improvements.
+ck's development roadmap, completed features, and planned improvements.
 
 ## Current Version (v0.5.3)
 

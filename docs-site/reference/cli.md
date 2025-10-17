@@ -1,3 +1,8 @@
+---
+title: CLI Reference
+description: Complete command-line reference for ck. All flags, options, search modes, output formats, and examples for semantic, hybrid, and keyword search.
+---
+
 # CLI Reference
 
 Complete command-line reference for ck.

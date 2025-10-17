@@ -1,3 +1,8 @@
+---
+title: TUI Mode
+description: Interactive text user interface for ck with live search, code preview, keyboard navigation, and score heatmaps. Full reference for ck-tui.
+---
+
 # TUI (Interactive) Mode
 
 The TUI (Text User Interface) provides a beautiful, interactive search experience with live results and code preview. This reference covers all features, keyboard shortcuts, and technical details of the TUI mode.

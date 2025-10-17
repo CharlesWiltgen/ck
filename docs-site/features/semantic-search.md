@@ -1,6 +1,11 @@
+---
+title: Semantic Search
+description: Find code by meaning using AI embeddings. Semantic search understands concepts, finds patterns, and locates related code without exact keyword matches.
+---
+
 # Semantic Search
 
-Find code by meaning, not just keywords. Semantic search understands concepts and finds related code even when exact terms don’t match.
+Find code by meaning, not just keywords. Semantic search understands concepts and finds related code even when exact terms don't match.
 
 ## What is Semantic Search?
 
