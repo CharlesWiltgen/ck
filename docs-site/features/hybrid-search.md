@@ -46,7 +46,7 @@ Due to Reciprocal Rank Fusion (RRF) mathematics, hybrid scores typically range f
 
 ### Reciprocal Rank Fusion Formula
 
-```
+```bash
 RRF_score(doc) = Σ (1 / (k + rank_i))
 
 where:

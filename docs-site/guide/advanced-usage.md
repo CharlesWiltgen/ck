@@ -199,7 +199,7 @@ ck --status .
 
 Indexes stored in `.ck/` directories:
 
-```
+```bash
 project/
 ├── src/
 ├── .ck/              # Safe to delete anytime

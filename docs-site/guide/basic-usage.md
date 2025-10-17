@@ -102,7 +102,7 @@ See [TUI Mode](/features/tui-mode) for complete keyboard shortcuts and features.
 
 Search without leaving your editor:
 
-```
+```bash
 1. Press Cmd+Shift+; (Ctrl+Shift+; on Windows/Linux)
 2. Type query: "database connection"
 3. See live results with scores

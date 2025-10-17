@@ -176,7 +176,7 @@ ck-tui
 ### Example Workflows
 
 #### Quick Code Navigation
-```
+```bash
 1. Press Cmd+Shift+; (search command)
 2. Type: "handle user input"
 3. See live results with scores
@@ -185,7 +185,7 @@ ck-tui
 ```
 
 #### Search Selection
-```
+```bash
 1. Select code: validateEmail
 2. Press Cmd+Shift+' (search selection)
 3. See all similar implementations
@@ -194,7 +194,7 @@ ck-tui
 ```
 
 #### Understanding Unfamiliar Codebase
-```
+```bash
 1. Open search panel
 2. Search: "authentication"
    → See all auth-related code
@@ -252,7 +252,7 @@ See [AI Agent Setup](/guide/ai-agent-setup) for detailed configuration guidance 
 ### Example Workflows
 
 #### AI-Assisted Code Review
-```
+```bash
 In Claude Desktop:
 > "Find all error handling code and summarize the patterns"
 
@@ -280,7 +280,7 @@ for result in results:
 ```
 
 #### Interactive Code Exploration
-```
+```bash
 In Claude:
 > "Show me how authentication works in this codebase"
 

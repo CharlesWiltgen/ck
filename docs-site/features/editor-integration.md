@@ -55,7 +55,7 @@ Restart VS Code to complete installation.
 #### Hybrid Search (Default)
 Combines semantic understanding with keyword precision for optimal results:
 
-```
+```bash
 Search: authentication flow
 ```
 
@@ -68,7 +68,7 @@ Hybrid search is enabled by default with automatic reranking for best relevance 
 #### Semantic Search
 Find code by meaning and concept, not just keywords:
 
-```
+```bash
 Search mode: Semantic
 Query: error handling patterns
 ```
@@ -78,7 +78,7 @@ Returns all error handling approaches across your codebase, even if they use dif
 #### Regex Search
 Traditional pattern matching when you need precise control:
 
-```
+```bash
 Search mode: Regex
 Query: function\s+handle\w+Error
 ```
@@ -89,7 +89,7 @@ Works like grep with full regular expression support.
 
 #### Search Panel Layout
 
-```
+```bash
 ┌─────────────────────────────────────────────────────┐
 │ ck Search                                    [mode] │
 ├─────────────────────────────────────────────────────┤
@@ -248,7 +248,7 @@ Spawns ck binary for each search operation:
 - Works with any ck version
 
 **Process Flow**:
-```
+```bash
 User types → Debounce → Spawn ck → Parse JSONL → Display results
 ```
 
@@ -315,7 +315,7 @@ code --install-extension . --force
 
 ### Architecture Overview
 
-```
+```bash
 ck-vscode/
 ├── src/
 │   ├── extension.ts       # Entry point, command registration

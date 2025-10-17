@@ -100,7 +100,7 @@ ck --serve
 cargo install ck-search
 ```
 
-### From npm
+### From NPM
 ```bash
 npm install -g @beaconbay/ck-search
 ```

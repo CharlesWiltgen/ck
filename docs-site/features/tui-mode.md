@@ -51,7 +51,7 @@ ck --tui --hybrid "timeout" .
 
 ## Interface Layout
 
-```
+```bash
 ┌─────────────────────────────────────────────────────┐
 │ Search: error handling              [Semantic] [●] │  ← Search box with mode indicator
 ├─────────────────────────────────────────────────────┤
@@ -154,7 +154,7 @@ ck --tui --hybrid "timeout" .
 Searches by meaning and concept, not exact text matches. Uses AI embeddings to understand code semantics.
 
 **Example queries:**
-```
+```bash
 "error handling"          → Finds: try/catch, Result<>, match arms, panic!
 "database connection pool" → Finds: connection management code
 "retry mechanism"          → Finds: backoff, retry loops, circuit breakers
@@ -192,7 +192,7 @@ Searches by meaning and concept, not exact text matches. Uses AI embeddings to u
 Classic grep-style pattern matching with full regex support. Searches exact text patterns.
 
 **Example queries:**
-```
+```bash
 "fn \w+_test"              → Finds: fn test_parse, fn integration_test
 "TODO|FIXME"               → Finds: TODO and FIXME comments
 "impl .* for"              → Finds: trait implementations in Rust
@@ -232,7 +232,7 @@ Hybrid search uses Reciprocal Rank Fusion (RRF) scoring, which produces values i
 :::
 
 **Example queries:**
-```
+```bash
 "timeout"                  → Finds: Code with "timeout" keyword, ranked by relevance
 "connect"                  → Finds: Code with "connect", prioritizes connection logic
 "parse"                    → Finds: Code with "parse", ranks parsing functions higher
@@ -309,7 +309,7 @@ The matched code chunk with semantic boundaries, showing complete functions, cla
 Colors code lines by semantic relevance to your query, showing which specific lines are most relevant.
 
 **Visual example:**
-```
+```bash
 │ 🟢  pub fn process_timeout(duration: Duration) -> Result<()> {  (0.95)
 │ 🟢      let elapsed = start.elapsed();                          (0.89)
 │ 🟡      if elapsed > duration {                                 (0.72)
@@ -500,7 +500,7 @@ Place `.ckignore` in your project root or search directory. See [Configuration](
 ### Effective Querying
 
 **Good semantic queries (specific, concept-based):**
-```
+```bash
 ✅ "authentication middleware"      # Specific pattern
 ✅ "database connection pool"       # Clear concept
 ✅ "retry mechanism with backoff"   # Detailed pattern
@@ -509,7 +509,7 @@ Place `.ckignore` in your project root or search directory. See [Configuration](
 ```
 
 **Less effective queries (too vague):**
-```
+```bash
 ❌ "the code that handles stuff"    # Too vague
 ❌ "things"                          # Not specific
 ❌ "good code"                       # Subjective, meaningless
@@ -517,7 +517,7 @@ Place `.ckignore` in your project root or search directory. See [Configuration](
 ```
 
 **Regex pattern tips:**
-```
+```bash
 ✅ "fn test_\w+"                    # Specific pattern
 ✅ "TODO|FIXME|XXX"                 # Multiple alternatives
 ✅ "impl .* for \w+"                # Trait implementations

@@ -10,13 +10,13 @@ cargo install ck-search
 
 This installs the latest stable release from [crates.io](https://crates.io/crates/ck-search).
 
-## From npm
+## From NPM
 
 ```bash
 npm install -g @beaconbay/ck-search
 ```
 
-This installs the npm package from [@beaconbay/ck-search](https://www.npmjs.com/package/@beaconbay/ck-search).
+This installs the NPM package from [@beaconbay/ck-search](https://www.npmjs.com/package/@beaconbay/ck-search).
 
 ### Check for updates
 
