@@ -1,21 +1,13 @@
 ---
 title: Installation
-description: Install ck semantic code search from crates.io, NPM, or source. Get started with your first search in minutes with automatic indexing and model downloads.
+description: Install ck hybrid code search from NPM, crates.io, or source. Get started with your first search in minutes with automatic indexing and model downloads.
 ---
 
 # Installation
 
 Get up and running with ck in minutes.
 
-## From crates.io (Recommended)
-
-```bash
-cargo install ck-search
-```
-
-This installs the latest stable release from [crates.io](https://crates.io/crates/ck-search).
-
-## From NPM
+## From NPM (Recommended)
 
 ```bash
 npm install -g @beaconbay/ck-search
@@ -35,6 +27,14 @@ npm outdated -g @beaconbay/ck-search
 # Upgrade to the latest version
 npm update -g @beaconbay/ck-search
 ```
+
+## From crates.io
+
+```bash
+cargo install ck-search
+```
+
+This installs the latest stable release from [crates.io](https://crates.io/crates/ck-search).
 
 ## From Source
 

@@ -61,8 +61,8 @@ features:
 ## Quick Start
 
 ```bash
-# Install from crates.io
-cargo install ck-search
+# Install from NPM
+npm install -g @beaconbay/ck-search
 
 # CLI: Command-line search (grep-compatible)
 ck --sem "error handling" src/
@@ -95,14 +95,14 @@ ck --serve
 
 ## Installation
 
-### From crates.io (recommended)
-```bash
-cargo install ck-search
-```
-
-### From NPM
+### From NPM (recommended)
 ```bash
 npm install -g @beaconbay/ck-search
+```
+
+### From crates.io
+```bash
+cargo install ck-search
 ```
 
 ### From source
