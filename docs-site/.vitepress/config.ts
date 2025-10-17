@@ -67,6 +67,7 @@ export default defineConfig({
           text: 'Reference',
           items: [
             { text: 'CLI Reference', link: '/reference/cli' },
+            { text: 'Output Formats', link: '/reference/output-formats' },
             { text: 'Embedding Models', link: '/reference/models' },
             { text: 'Configuration', link: '/reference/configuration' },
             { text: 'Advanced Configuration', link: '/reference/advanced' },

@@ -110,6 +110,8 @@ ck --serve
 | `--no-snippet` | Metadata only (no content snippets) |
 | `--snippet-length NUM` | Snippet size in characters |
 
+See [Output Formats Reference](/reference/output-formats) for complete JSON/JSONL schemas, field descriptions, and processing examples.
+
 ## MCP Options
 
 | Flag | Description |
