@@ -1,6 +1,6 @@
 # ck Documentation Site
 
-VitePress-powered documentation for the ck semantic code search tool.
+VitePress-powered documentation for the ck hybrid code search tool.
 
 ## Prerequisites
 

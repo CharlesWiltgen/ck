@@ -3,14 +3,11 @@ import { defineConfig } from 'vitepress'
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   title: "ck",
-  description: "Semantic Code Search - grep that understands what you're looking for",
+  description: "Hybrid Code Search - grep with semantic understanding",
   base: '/ck/',
 
   markdown: {
-    config(md) {
-      // Enable the built-in typographer option
-      md.set({ typographer: true })
-    }
+    typographer: true
   },
 
   head: [

@@ -52,7 +52,7 @@ Create a `.claude/` directory in your project with guidance for Claude:
 ```markdown
 # .claude/ck-semantic-search.md
 
-## Semantic Code Search with ck
+## Hybrid Code Search with ck
 
 Use `ck` for finding code by meaning, not just keywords.
 

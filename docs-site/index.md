@@ -3,8 +3,8 @@ layout: home
 
 hero:
   name: ck <span style="font-weight:300;">("seek")</span>
-  text: Semantic Code Search
-  tagline: Four interfaces. One powerful search. CLI, TUI, Editor, or MCP — find code by meaning with intelligent semantic search
+  text: Hybrid Code Search
+  tagline: ck’s hybrid search fuses lexical (BM25/grep) precision with embedding-based recall and re-ranks both, so you find the right code even when the exact keywords aren’t there.
   image:
     src: /logo.png
     alt: ck logo
@@ -17,6 +17,26 @@ hero:
       link: https://github.com/BeaconBay/ck
 
 features:
+  - icon: ⚡
+    title: Drop-in <code>grep</code> Replacement
+    details: All your muscle memory works. Same flags, same behavior, same output format — plus semantic understanding when you need it
+    link: /features/grep-compatibility
+
+  - icon: 🔍
+    title: Semantic Search
+    details: Find code by concept, not keywords. Search for “retry logic” and find backoff, circuit breakers, and related patterns even without exact matches
+    link: /features/semantic-search
+
+  - icon: 🎯
+    title: Hybrid Search
+    details: Combine keyword precision with semantic understanding using Reciprocal Rank Fusion for best-of-both-worlds search results
+    link: /features/hybrid-search
+
+  - icon: 🤖
+    title: AI Agent Integration
+    details: Built-in MCP (Model Context Protocol) server for seamless integration with Claude Desktop, Cursor, and any MCP-compatible AI client
+    link: /features/mcp-integration
+
   - icon: 💻
     title: Terminal User Interface
     details: Interactive search with live results, visual score heatmaps, and keyboard-driven navigation. Explore code with TUI mode for instant feedback
@@ -27,30 +47,10 @@ features:
     details: Native VSCode and Cursor extension. Search without leaving your editor with inline results, instant navigation, and live updates
     link: /features/editor-integration
 
-  - icon: 🤖
-    title: AI Agent Integration
-    details: Built-in MCP (Model Context Protocol) server for seamless integration with Claude Desktop, Cursor, and any MCP-compatible AI client
-    link: /features/mcp-integration
-
-  - icon: 🔍
-    title: Semantic Search
-    details: Find code by concept, not keywords. Search for "retry logic" and find backoff, circuit breakers, and related patterns even without exact matches
-    link: /features/semantic-search
-
-  - icon: 🎯
-    title: Hybrid Search
-    details: Combine keyword precision with semantic understanding using Reciprocal Rank Fusion for best-of-both-worlds search results
-    link: /features/hybrid-search
-
   - icon: 🚀
     title: Blazing Fast
     details: ~1M LOC indexed in under 2 minutes. Sub-500ms queries. Chunk-level incremental indexing only re-embeds what changed
     link: /guide/basic-usage
-
-  - icon: ⚡
-    title: Drop-in grep Replacement
-    details: All your muscle memory works. Same flags, same behavior, same output format — plus semantic understanding when you need it
-    link: /features/grep-compatibility
 
   - icon: 📦
     title: Completely Offline

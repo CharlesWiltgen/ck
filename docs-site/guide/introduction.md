@@ -1,6 +1,6 @@
 ---
 title: Introduction to ck
-description: Semantic code search tool that finds code by meaning, not keywords. Drop-in grep replacement with AI-powered understanding for developers and AI agents.
+description: Hybrid code search tool that finds code by meaning, not keywords. Drop-in grep replacement with AI-powered understanding for developers and AI agents.
 ---
 
 # Introduction
@@ -9,7 +9,7 @@ description: Semantic code search tool that finds code by meaning, not keywords.
 
 ## What is ck?
 
-ck is a semantic code search tool that combines the familiarity of grep with the intelligence of modern AI embeddings. It’s designed for:
+ck is a hybrid code search tool that combines the familiarity of grep with the intelligence of modern AI embeddings. It's designed for:
 
 - **Developers** who want to find code by what it does, not what it’s named
 - **AI agents** that need reliable code search capabilities via MCP protocol

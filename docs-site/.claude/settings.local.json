@@ -5,7 +5,8 @@
       "Bash(ck:*)",
       "Bash(pnpm view:*)",
       "Bash(pnpm list:*)",
-      "Bash(tree:*)"
+      "Bash(tree:*)",
+      "WebSearch"
     ],
     "deny": [],
     "ask": []
