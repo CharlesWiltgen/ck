@@ -86,7 +86,7 @@ BGE-Small trades some accuracy for speed:
 
 Create comprehensive `.ckignore`:
 
-```gitignore
+```txt
 # Build artifacts
 target/
 dist/
@@ -362,7 +362,7 @@ ck --inspect src/auth.py --model nomic-v1.5
 **Generated code**:
 - Often produces many similar chunks
 - Consider excluding in `.ckignore`:
-  ```gitignore
+  ```txt
   *.generated.*
   *_pb2.py
   *.pb.go
@@ -530,7 +530,7 @@ ck-index-all() {
 
 ### Monorepo Patterns
 
-```gitignore
+```txt
 # Exclude everything by default
 /*
 
@@ -547,7 +547,7 @@ services/**/mocks/
 ### Framework-Specific Patterns
 
 **Next.js**:
-```gitignore
+```txt
 .next/
 out/
 *.config.js
@@ -557,7 +557,7 @@ public/
 ```
 
 **Rails**:
-```gitignore
+```txt
 db/schema.rb
 db/migrate/
 spec/fixtures/
@@ -566,7 +566,7 @@ log/
 ```
 
 **Django**:
-```gitignore
+```txt
 **/migrations/
 manage.py
 **/settings.py
@@ -575,7 +575,7 @@ manage.py
 ### Development vs Production
 
 **Development** (`.ckignore.dev`):
-```gitignore
+```txt
 # Aggressive exclusions for fast iteration
 *.test.*
 *.spec.*
@@ -585,7 +585,7 @@ docs/
 ```
 
 **Production** (`.ckignore.prod`):
-```gitignore
+```txt
 # Minimal exclusions for comprehensive search
 node_modules/
 dist/
@@ -608,7 +608,7 @@ cp .ckignore.prod .ckignore && ck --index .
 For files >10K LOC that slow indexing:
 
 **Option 1**: Exclude from index
-```gitignore
+```txt
 # .ckignore
 schema.sql
 generated/
@@ -659,7 +659,7 @@ echo "symlinked-dir/" >> .ckignore
 
 Rare edge case where binary is indexed:
 
-```gitignore
+```txt
 # .ckignore - explicit binary exclusions
 *.bin
 *.dat
@@ -727,7 +727,7 @@ done
 
 Never commit indexes of sensitive codebases:
 
-```gitignore
+```txt
 # .gitignore
 .ck/
 ```

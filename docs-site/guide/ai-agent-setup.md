@@ -246,7 +246,7 @@ ck --switch-model jina-code .
 
 Optimize indexing for AI-assisted development:
 
-```gitignore
+```txt
 # .ckignore
 
 # Build artifacts (not useful for understanding code)

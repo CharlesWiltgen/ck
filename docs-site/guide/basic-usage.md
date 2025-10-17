@@ -320,7 +320,7 @@ vim .ckignore
 ```
 
 Example `.ckignore`:
-```gitignore
+```txt
 # Images and media
 *.png
 *.jpg

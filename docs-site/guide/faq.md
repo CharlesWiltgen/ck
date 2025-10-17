@@ -118,7 +118,7 @@ ck --index ./docs  # Still indexes entire repo from root
 ```
 
 **Workaround**: Use `.ckignore` to exclude everything except your target directory:
-```gitignore
+```txt
 # Exclude everything
 /*
 
@@ -272,7 +272,7 @@ Default `.ckignore` includes:
 
 Edit `.ckignore` in your repository root:
 
-```gitignore
+```txt
 # Add custom patterns
 logs/
 *.log

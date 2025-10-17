@@ -23,7 +23,7 @@ Indexing always starts from the repository root, even when specifying a subdirec
 
 **Workaround**:
 Use `.ckignore` to exclude everything except your target directory:
-```gitignore
+```txt
 # Exclude everything
 /*
 

@@ -4,6 +4,7 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   title: "ck",
   description: "Hybrid Code Search - grep with semantic understanding",
+  lang: 'en-US',
   base: '/ck/',
 
   markdown: {
@@ -17,7 +18,7 @@ export default defineConfig({
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     logo: '/logo.png',
-    siteTitle: false,
+    siteTitle: 'ck',
 
     nav: [
       { text: 'Guide', link: '/guide/introduction' },

@@ -15,7 +15,8 @@ Control which files are excluded from indexing using `.ckignore` in your reposit
 
 Uses gitignore-style patterns:
 
-```gitignore
+```txt
+# .ckignore syntax
 # Comments start with #
 
 # Exclude directories
@@ -45,7 +46,8 @@ temp_*.txt
 
 Auto-created `.ckignore` includes:
 
-```gitignore
+```txt
+# Default .ckignore patterns
 # Images
 *.png
 *.jpg
@@ -218,7 +220,8 @@ cat .ck/manifest.json
 ### Example .ckignore for Different Projects
 
 **JavaScript/Node.js:**
-```gitignore
+```txt
+# .ckignore for JavaScript/Node.js projects
 node_modules/
 dist/
 build/
@@ -231,7 +234,8 @@ coverage/
 ```
 
 **Rust:**
-```gitignore
+```txt
+# .ckignore for Rust projects
 target/
 Cargo.lock
 *.json
@@ -240,7 +244,8 @@ Cargo.lock
 ```
 
 **Python:**
-```gitignore
+```txt
+# .ckignore for Python projects
 __pycache__/
 *.pyc
 venv/
@@ -252,7 +257,8 @@ build/
 ```
 
 **Go:**
-```gitignore
+```txt
+# .ckignore for Go projects
 vendor/
 *.mod
 *.sum

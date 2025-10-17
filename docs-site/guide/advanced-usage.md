@@ -131,7 +131,7 @@ Output shows:
 
 Uses gitignore-style patterns:
 
-```gitignore
+```txt
 # Exclude directory and all contents
 node_modules/
 target/
