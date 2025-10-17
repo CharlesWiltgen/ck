@@ -16,11 +16,13 @@ ck was designed **primarily for AI agents**, not humans. AI agents naturally und
 ## Why ck for AI Agents?
 
 ### Traditional Tools
+
 - **grep**: Finds exact matches only
 - **cscope/ctags**: Symbol-based, requires exact names
 - **AST parsers**: Complex, language-specific
 
 ### ck Advantages for AI
+
 1. **Semantic understanding**: Find code by meaning, not just keywords
 2. **JSON output**: Perfect for LLM consumption
 3. **Adaptive search**: AI agents naturally tune parameters
@@ -50,6 +52,7 @@ See the complete MCP setup guide: [MCP Integration](/features/mcp-integration)
 ```
 
 **Capabilities**:
+
 - `search_semantic`: Semantic code search
 - `search_hybrid`: Hybrid semantic + keyword
 - `search_keyword`: Traditional grep
@@ -425,13 +428,11 @@ def format_for_llm(results: list, max_length: int = 4000) -> str:
     formatted = []
 
     for r in results:
-        entry = f"""
-File: {r['file']}:{r['line']}
-{f"Score: {r['score']:.3f}" if 'score' in r else ""}
-```
-{r.get('content', '')}
-```
-"""
+        entry = (
+            f"File: {r['file']}:{r['line']}\n"
+            f"{f'Score: {r[\"score\"]:.3f}' if 'score' in r else ''}\n"
+            f"```\n{r.get('content', '')}\n```\n"
+        )
         formatted.append(entry)
 
     full_text = "\n---\n".join(formatted)
@@ -447,7 +448,7 @@ File: {r['file']}:{r['line']}
 
 ck provides near-miss hints when no results are found:
 
-```
+```text
 No matches found above threshold 0.7
 Near-miss: ./auth.rs:42 (score: 0.68)
 Hint: Try lowering threshold to 0.6
