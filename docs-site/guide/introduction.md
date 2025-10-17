@@ -78,7 +78,7 @@ ck --serve
 
 ## Next Steps
 
-- [Get started](/guide/getting-started) with installation
+- [Get started](/guide/installation) with installation
 - Learn [basic usage](/guide/basic-usage) patterns
 - Explore [MCP integration](/features/mcp-integration) for AI agents
 - Read the [CLI reference](/reference/cli) for all options

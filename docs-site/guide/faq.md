@@ -88,7 +88,8 @@ Subsequent indexes only process changed files, making them much faster.
 
 ### Large files (26K+ LOC) re-index slowly on changes. Can this be optimized?
 
-Currently, ck re-indexes the entire file when it detects changes. This is a known limitation for very large files.
+::: warning Performance Impact on Large Files
+Currently, ck re-indexes the entire file when it detects changes. This can be slow for files over 26K LOC.
 
 **Why this happens**:
 - Semantic chunking boundaries could change based on file content
@@ -100,6 +101,7 @@ Currently, ck re-indexes the entire file when it detects changes. This is a know
 3. Split large files if possible
 
 **Future**: Git diff-based incremental indexing is being explored (#69).
+:::
 
 ### Can I index only a specific subdirectory?
 
@@ -212,7 +214,8 @@ ck --status .
 
 ### When should I rebuild the index?
 
-Rebuild when:
+::: tip Rebuilding Is Rarely Needed
+ck automatically detects and re-indexes changed files. You only need to rebuild when:
 - Switching embedding models
 - Index seems corrupted
 - Major codebase restructuring
@@ -225,8 +228,7 @@ ck --index .
 # Or switch model (rebuilds automatically)
 ck --switch-model nomic-v1.5 .
 ```
-
-**Note**: Normal file changes don’t require manual rebuilding — ck automatically detects and re-indexes changed files.
+:::
 
 ### Can I have multiple indexes for different models?
 

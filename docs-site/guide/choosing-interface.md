@@ -470,7 +470,7 @@ See [AI Agent Setup](/guide/ai-agent-setup) for complete configuration details.
 
 ## See Also
 
-- [Getting Started](/guide/getting-started) — Installation and first steps
+- [Getting Started](/guide/installation) — Installation and first steps
 - [Basic Usage](/guide/basic-usage) — Common patterns
 - [CLI Reference](/reference/cli) — Complete command reference
 - [TUI Mode](/features/tui-mode) — Interactive terminal interface

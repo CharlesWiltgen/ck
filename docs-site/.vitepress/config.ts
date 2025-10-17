@@ -27,7 +27,7 @@ export default defineConfig({
           text: 'Getting Started',
           items: [
             { text: 'Introduction', link: '/guide/introduction' },
-            { text: 'Installation', link: '/guide/getting-started' },
+            { text: 'Installation', link: '/guide/installation' },
             { text: 'Choosing an Interface', link: '/guide/choosing-interface' },
             { text: 'Basic Usage', link: '/guide/basic-usage' },
             { text: 'Advanced Usage', link: '/guide/advanced-usage' },

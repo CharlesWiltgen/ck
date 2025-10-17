@@ -139,12 +139,13 @@ ck --sem --threshold 0.3 "pattern" src/
 ck --sem --threshold 0.9 "exact concept" src/
 ```
 
-**Threshold Guidelines:**
-- `0.9+`: Very strict, nearly exact conceptual matches
-- `0.7-0.9`: High confidence, clearly related
-- `0.5-0.7`: Moderate, good general search (default: 0.6)
-- `0.3-0.5`: Exploratory, finds loosely related code
-- `<0.3`: Very broad, may include irrelevant results
+::: tip Threshold Guidelines
+- **0.9+**: Very strict, nearly exact conceptual matches
+- **0.7-0.9**: High confidence, clearly related
+- **0.5-0.7**: Moderate, good general search (default: 0.6)
+- **0.3-0.5**: Exploratory, finds loosely related code
+- **<0.3**: Very broad, may include irrelevant results
+:::
 
 ### Result Limiting
 
@@ -208,17 +209,14 @@ $ ck --sem --scores "database connection" src/
 
 ### False Positives
 
-Semantic search can occasionally return weakly related results:
+::: tip Understanding Semantic Matches
+Semantic search finds code by meaning, which can include related concepts. Searching for "database connection" might also return "connection string" code.
 
-```bash
-# May find "connection string" code when searching for "database connection"
-ck --sem --threshold 0.6 "database connection" src/
-```
-
-**Mitigation:**
+**If results are too broad:**
 - Increase threshold: `--threshold 0.7`
 - Use hybrid search: `--hybrid "database connection"`
-- Refine query: “database connection pool” instead of “database connection”
+- Make query more specific: "database connection pool" instead of "database connection"
+:::
 
 ## Language Support
 
@@ -260,19 +258,19 @@ ck --sem "another pattern" src/
 
 ### Query Formulation
 
+::: tip Writing Effective Queries
+Describe **what the code does** with specific concepts.
+
 ✅ **Good queries:**
-```bash
-ck --sem "error handling"           # Clear concept
-ck --sem "authentication logic"     # Specific functionality
-ck --sem "database connection pool" # Well-defined pattern
-```
+- "error handling" (clear concept)
+- "authentication logic" (specific functionality)
+- "database connection pool" (well-defined pattern)
 
 ❌ **Poor queries:**
-```bash
-ck --sem "code"              # Too vague
-ck --sem "x"                 # Single letter, ambiguous
-ck --sem "the main thing"    # Unclear concept
-```
+- "code" (too vague)
+- "x" (single letter, ambiguous)
+- "the main thing" (unclear concept)
+:::
 
 ### When to Use Semantic Search
 

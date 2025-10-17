@@ -60,11 +60,13 @@ Use `ck` for finding code by meaning, not just keywords.
 
 ### Best Practices
 
+::: tip Recommended Usage Patterns
 1. **Index once per session**: Run `ck --index .` at project start
 2. **Use semantic for concepts**: "error handling", "database queries"
 3. **Use lexical for names**: "getUserById", "AuthController"
 4. **Tune threshold**: `--threshold 0.7` for high-confidence results
 5. **Limit results**: `--limit 20` for focused output
+:::
 
 ### Example Workflows
 
@@ -150,7 +152,9 @@ ck --sem --threshold 0.8 "error handling" src/
 ck --sem --threshold 0.9 "exact concept" src/
 ```
 
-**Recommendation for AI agents**: Start with `0.7` for focused results, adjust down to `0.5` if too few matches.
+::: tip Threshold Sweet Spot for AI Agents
+Start with `0.7` for focused, high-confidence results. If you get too few matches, adjust down to `0.5` for broader coverage.
+:::
 
 #### Result Limiting
 
@@ -198,11 +202,12 @@ ck --jsonl --no-snippet --sem "pattern" src/
 ck --jsonl --snippet-length 150 --sem "pattern" src/
 ```
 
-**Why JSONL for AI agents**:
-- ✅ Stream-friendly: Process results as they arrive
-- ✅ Memory-efficient: Parse one result at a time
-- ✅ Error-resilient: One malformed line doesn’t break everything
-- ✅ Standard format: Used by OpenAI, Anthropic, modern ML pipelines
+::: tip Why JSONL for AI Agents
+- **Stream-friendly**: Process results as they arrive
+- **Memory-efficient**: Parse one result at a time
+- **Error-resilient**: One malformed line doesn't break everything
+- **Standard format**: Used by OpenAI, Anthropic, modern ML pipelines
+:::
 
 #### JSON
 

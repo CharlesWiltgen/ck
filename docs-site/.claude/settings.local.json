@@ -4,7 +4,8 @@
       "Read(//Users/Charles/Projects/ck/**)",
       "Bash(ck:*)",
       "Bash(pnpm view:*)",
-      "Bash(pnpm list:*)"
+      "Bash(pnpm list:*)",
+      "Bash(tree:*)"
     ],
     "deny": [],
     "ask": []

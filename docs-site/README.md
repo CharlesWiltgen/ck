@@ -56,7 +56,7 @@ docs-site/
 │   └── cache/              # Build cache (gitignored)
 ├── guide/                  # Getting started guides
 │   ├── introduction.md
-│   ├── getting-started.md
+│   ├── installation.md
 │   ├── basic-usage.md
 │   └── advanced-usage.md
 ├── features/               # Feature documentation
@@ -147,7 +147,7 @@ sidebar: {
 ### Internal Links
 
 ```markdown
-[Link text](/guide/getting-started)
+[Link text](/guide/installation)
 [Another page](/features/semantic-search#section)
 ```
 

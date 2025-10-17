@@ -1,10 +1,8 @@
-# Getting Started
+# Installation
 
 Get up and running with ck in minutes.
 
-## Installation
-
-### From crates.io (Recommended)
+## From crates.io (Recommended)
 
 ```bash
 cargo install ck-search
@@ -12,7 +10,28 @@ cargo install ck-search
 
 This installs the latest stable release from [crates.io](https://crates.io/crates/ck-search).
 
-### From Source
+## From npm
+
+```bash
+npm install -g @beaconbay/ck-search
+```
+
+This installs the npm package from [@beaconbay/ck-search](https://www.npmjs.com/package/@beaconbay/ck-search).
+
+### Check for updates
+
+```bash
+# Check current version
+npm list -g @beaconbay/ck-search
+
+# Check if updates are available
+npm outdated -g @beaconbay/ck-search
+
+# Upgrade to the latest version
+npm update -g @beaconbay/ck-search
+```
+
+## From Source
 
 ```bash
 git clone https://github.com/BeaconBay/ck
@@ -20,7 +39,7 @@ cd ck
 cargo install --path ck-cli
 ```
 
-### Verify Installation
+## Verify Installation
 
 ```bash
 ck --version
@@ -38,6 +57,7 @@ ck "TODO" src/
 ck --sem "error handling" src/
 ```
 
+::: tip First-Time Setup
 The first semantic search will:
 1. Detect your project structure
 2. Download embedding model (one-time, ~80MB)
@@ -45,6 +65,7 @@ The first semantic search will:
 4. Perform the search
 
 Subsequent searches are fast — only changed files are re-indexed.
+:::
 
 ## Quick Examples
 
@@ -95,9 +116,11 @@ ck --hybrid "connection timeout" src/
 # Show relevance scores
 ck --hybrid --scores "cache invalidation" src/
 
-# Filter by confidence (hybrid uses RRF scores ~0.01-0.05)
+# Filter by confidence
 ck --hybrid --threshold 0.02 "auth" src/
 ```
+
+*Note: Hybrid search uses RRF (Reciprocal Rank Fusion) scores in the 0.01-0.05 range, unlike semantic search which uses 0.0-1.0.*
 
 ## Understanding the Output
 
@@ -200,6 +223,10 @@ ck --add new_file.rs
 # Inspect chunking strategy
 ck --inspect src/main.rs
 ```
+
+::: warning
+`ck --clean` removes the entire index and requires a full rebuild. For most cases, use `ck --index` instead — it updates incrementally and is much faster.
+:::
 
 ## Model Selection
 
@@ -309,11 +336,13 @@ First-time indexing downloads models and processes all files. Subsequent searche
 
 ### Model Download Fails
 
+::: tip Model Cache Location
 Models are cached in:
 - Linux/macOS: `~/.cache/ck/models/`
 - Windows: `%LOCALAPPDATA%\ck\cache\models\`
 
-Check network connection and disk space.
+Ensure you have an active internet connection and ~500MB free disk space.
+:::
 
 ### Search Results Seem Wrong
 

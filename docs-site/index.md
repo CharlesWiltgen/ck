@@ -11,7 +11,7 @@ hero:
   actions:
     - theme: brand
       text: Get Started
-      link: /guide/getting-started
+      link: /guide/installation
     - theme: alt
       text: View on GitHub
       link: https://github.com/BeaconBay/ck
@@ -100,6 +100,11 @@ ck --serve
 cargo install ck-search
 ```
 
+### From npm
+```bash
+npm install -g @beaconbay/ck-search
+```
+
 ### From source
 ```bash
 git clone https://github.com/BeaconBay/ck
@@ -111,7 +116,7 @@ cargo install --path ck-cli
 
 <div class="vp-doc">
 
-- [**Getting Started Guide**](/guide/getting-started) — Installation and first search
+- [**Getting Started Guide**](/guide/installation) — Installation and first search
 - [**Choosing an Interface**](/guide/choosing-interface) — CLI, TUI, Editor, or MCP?
 - [**TUI Mode**](/features/tui-mode) — Interactive terminal interface
 - [**Editor Integration**](/features/editor-integration) — VSCode/Cursor extension
