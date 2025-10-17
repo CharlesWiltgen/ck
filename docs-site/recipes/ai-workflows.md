@@ -415,7 +415,7 @@ def find_refactoring_opportunities(pattern: str) -> dict:
 
 ### Parsing JSON Output
 
-```python
+````python
 import json
 
 def parse_ck_results(output: str) -> list:
@@ -432,11 +432,13 @@ def format_for_llm(results: list, max_length: int = 4000) -> str:
     formatted = []
 
     for r in results:
-        entry = (
-            f"File: {r['file']}:{r['line']}\n"
-            f"{f'Score: {r[\"score\"]:.3f}' if 'score' in r else ''}\n"
-            f"```\n{r.get('content', '')}\n```\n"
-        )
+        entry = f"""
+File: {r['file']}:{r['line']}
+{f"Score: {r['score']:.3f}" if 'score' in r else ""}
+```
+{r.get('content', '')}
+```
+"""
         formatted.append(entry)
 
     full_text = "\n---\n".join(formatted)
@@ -446,7 +448,7 @@ def format_for_llm(results: list, max_length: int = 4000) -> str:
         full_text = full_text[:max_length] + "\n\n[... truncated ...]"
 
     return full_text
-```
+````
 
 ### Handling Near-Miss Feedback
 
