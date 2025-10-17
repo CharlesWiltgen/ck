@@ -7,7 +7,6 @@ description: Find and refactor duplicated code patterns using semantic search. I
 
 **Goal**: Find similar code patterns across a codebase to refactor, deduplicate, or ensure consistency.
 
-**Time**: 15-30 minutes
 **Difficulty**: Intermediate
 
 ## Prerequisites

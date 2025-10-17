@@ -7,7 +7,6 @@ description: Use semantic search to quickly locate bug sources, trace error path
 
 **Goal**: Quickly locate and understand the source of production bugs using semantic search, even when you don't know the exact function or variable names.
 
-**Time**: 10-30 minutes (depending on issue complexity)
 **Difficulty**: Beginner to Intermediate
 
 ## Prerequisites

@@ -7,7 +7,6 @@ description: Locate and understand authentication implementations using semantic
 
 **Goal**: Locate all authentication and authorization code in a codebase to understand security implementation or prepare for a security audit.
 
-**Time**: 10-20 minutes
 **Difficulty**: Beginner to Intermediate
 
 ## Prerequisites

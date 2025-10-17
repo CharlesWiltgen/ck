@@ -7,7 +7,6 @@ description: Perform comprehensive security audits using semantic search. Find v
 
 **Goal**: Perform a comprehensive security audit of a codebase to identify vulnerabilities, verify security controls, and ensure secure coding practices.
 
-**Time**: 30-60 minutes
 **Difficulty**: Intermediate to Advanced
 
 ## Prerequisites

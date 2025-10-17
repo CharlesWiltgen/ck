@@ -7,7 +7,6 @@ description: Integrate ck with AI agents for autonomous code analysis. MCP serve
 
 **Goal**: Integrate ck with AI agents to enable autonomous code search, analysis, and understanding.
 
-**Time**: 20-40 minutes
 **Difficulty**: Intermediate
 
 ::: tip AI-First Design

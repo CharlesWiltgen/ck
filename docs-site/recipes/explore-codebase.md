@@ -7,7 +7,6 @@ description: Task-based guide for understanding unfamiliar codebases using ck se
 
 **Goal**: Understand an unfamiliar codebase's structure, patterns, and architecture in 15 minutes.
 
-**Time**: 10-15 minutes
 **Difficulty**: Beginner
 
 ## Prerequisites
