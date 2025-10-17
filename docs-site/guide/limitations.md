@@ -47,7 +47,7 @@ When a file changes, `ck` re-indexes the entire file rather than using git diff 
 
 **Workaround**:
 1. Exclude very large files from indexing:
-   ```gitignore
+   ```txt
    # .ckignore
    schema.sql
    *.generated.sql
@@ -210,6 +210,32 @@ Unsupported languages still work but with less intelligent chunking:
 - Still provides semantic search, just with less precise boundaries
 
 **Tracking**: GitHub issue [#21](https://github.com/BeaconBay/ck/issues/21)
+
+### PDF Support (Experimental)
+
+**Status**: Basic PDF text extraction is supported but has limitations.
+
+**Details**:
+ck can index and search PDF files by extracting text content, but uses a different code path than standard source code indexing.
+
+**Limitations**:
+- Text extraction only (no semantic PDF parsing)
+- Doesn't always work perfectly with all PDF formats
+- Not as sophisticated as cloud-based parsers like llamaparse
+- May produce lower-quality chunks compared to source code
+
+**Trade-off**:
+This is a local/privacy-first approach vs cloud parsing quality. Your PDFs never leave your machine, but parsing quality is lower than cloud services like semtools.
+
+**Workaround**:
+```txt
+# .ckignore
+# Exclude problematic PDFs
+docs/large-spec.pdf
+*.scanned.pdf
+```
+
+For mission-critical PDF search, consider cloud-based tools like semtools.
 
 ## Feature Limitations
 

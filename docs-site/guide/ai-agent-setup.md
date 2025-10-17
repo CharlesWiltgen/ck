@@ -457,6 +457,38 @@ ck --hybrid "query" src/
 ck --lex "ExactFunctionName" src/
 ```
 
+### Near-Miss Threshold Hints
+
+**Feature**: When no results are found above the specified threshold, ck provides helpful "near-miss" hints.
+
+**How it helps AI agents**:
+When semantic search finds no matches above your threshold, ck will show the closest match that fell just below the threshold, along with its score. This gives AI agents a clear signal to adjust the threshold parameter intelligently.
+
+**Example output**:
+```bash
+$ ck --sem --threshold 0.7 "retry logic" src/
+
+No matches found above threshold 0.7
+
+Near-miss:
+  src/network/client.rs:156 (score: 0.68)
+  "Implements exponential backoff for failed requests"
+
+Hint: Try lowering threshold to 0.65 or use --threshold 0.6
+```
+
+**AI agent workflow**:
+1. Initial search with `--threshold 0.7` returns no results
+2. ck shows near-miss at 0.68
+3. Agent automatically retries with `--threshold 0.65`
+4. Finds relevant matches
+
+This feedback loop helps agents converge on optimal thresholds without overshooting.
+
+::: tip Why This Matters for AI Agents
+AI agents naturally understand threshold tuning. Near-miss hints provide actionable feedback, allowing agents to adjust parameters intelligently rather than guessing or giving up. This is one of ck's "nice affordances" for AI-first usage.
+:::
+
 ### Index Out of Date
 
 **Solution**: Check status and reindex if needed
