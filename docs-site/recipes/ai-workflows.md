@@ -98,7 +98,11 @@ See the complete MCP setup guide: [MCP Integration](/features/mcp-integration)
 import subprocess
 import json
 
-def search_code_semantic(query: str, threshold: float = 0.6, limit: int = 10) -> list:
+def search_code_semantic(
+    query: str,
+    threshold: float = 0.6,
+    limit: int = 10
+) -> list:
     """Search codebase semantically."""
     cmd = [
         "ck",
