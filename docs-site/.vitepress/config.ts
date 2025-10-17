@@ -16,9 +16,9 @@ export default defineConfig({
 
     nav: [
       { text: 'Guide', link: '/guide/introduction' },
-      { text: 'Recipes', link: '/recipes/explore-codebase' },
       { text: 'Features', link: '/features/semantic-search' },
       { text: 'Reference', link: '/reference/cli' },
+      { text: 'Recipes', link: '/recipes/explore-codebase' },
       { text: 'GitHub', link: 'https://github.com/BeaconBay/ck' }
     ],
 
