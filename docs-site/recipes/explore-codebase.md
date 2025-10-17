@@ -152,13 +152,13 @@ ck --sem "authentication jwt token validation" . --limit 5
 
 After these 6 steps, you should understand:
 
-✅ **Architecture**: How the application is structured
-✅ **Entry points**: Where execution begins
-✅ **Core concepts**: Main types and abstractions
-✅ **Patterns**: Architectural patterns in use
-✅ **Configuration**: How the app is configured
-✅ **Error handling**: How errors are managed
-✅ **Dependencies**: External services and libraries
+- **Architecture**: How the application is structured
+- **Entry points**: Where execution begins
+- **Core concepts**: Main types and abstractions
+- **Patterns**: Architectural patterns in use
+- **Configuration**: How the app is configured
+- **Error handling**: How errors are managed
+- **Dependencies**: External services and libraries
 
 ## Tips for Better Exploration
 
