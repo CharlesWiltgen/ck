@@ -79,7 +79,7 @@ ck --serve
 
 | Flag | Description |
 |------|-------------|
-| `--topk NUM`, `--limit NUM` | Limit to top NUM results (default: 100) |
+| `--topk NUM`, `--limit NUM` | Limit to top NUM results. **Semantic/hybrid**: defaults to 10 results, max 100. **Keyword**: returns all matches. |
 | `--threshold FLOAT` | Minimum relevance score. **Semantic**: 0.0-1.0 (default: 0.6). **Hybrid**: ~0.01-0.05 (try 0.02). See [Hybrid Search](/features/hybrid-search#understanding-hybrid-thresholds) for details. |
 | `--full-section` | Return complete code sections |
 
