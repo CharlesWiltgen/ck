@@ -16,6 +16,7 @@ export default defineConfig({
 
     nav: [
       { text: 'Guide', link: '/guide/introduction' },
+      { text: 'Recipes', link: '/recipes/explore-codebase' },
       { text: 'Features', link: '/features/semantic-search' },
       { text: 'Reference', link: '/reference/cli' },
       { text: 'GitHub', link: 'https://github.com/BeaconBay/ck' }
@@ -41,6 +42,19 @@ export default defineConfig({
             { text: 'FAQ', link: '/guide/faq' },
             { text: 'Known Limitations', link: '/guide/limitations' },
             { text: 'Roadmap', link: '/guide/roadmap' }
+          ]
+        }
+      ],
+      '/recipes/': [
+        {
+          text: 'Task-Based Guides',
+          items: [
+            { text: 'Exploring New Codebases', link: '/recipes/explore-codebase' },
+            { text: 'Finding Authentication Code', link: '/recipes/find-auth' },
+            { text: 'Refactoring Similar Patterns', link: '/recipes/refactor-patterns' },
+            { text: 'Security Code Review', link: '/recipes/security-review' },
+            { text: 'AI Agent Search Workflows', link: '/recipes/ai-workflows' },
+            { text: 'Debugging Production Issues', link: '/recipes/debug-production' }
           ]
         }
       ],
