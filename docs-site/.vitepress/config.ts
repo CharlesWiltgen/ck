@@ -6,6 +6,13 @@ export default defineConfig({
   description: "Semantic Code Search - grep that understands what you're looking for",
   base: '/ck/',
 
+  markdown: {
+    config(md) {
+      // Enable the built-in typographer option
+      md.set({ typographer: true })
+    }
+  },
+
   head: [
     ['link', { rel: 'icon', type: 'image/png', href: '/ck/favicon.png' }]
   ],
